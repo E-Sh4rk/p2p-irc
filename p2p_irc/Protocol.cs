@@ -33,6 +33,7 @@ namespace p2p_irc
 					p.SayHello();
 					lastHelloSaid = DateTime.Now;
 				}
+				// TODO: Send Neighbors
 				Thread.Sleep(1000);
 			}
 		}
@@ -59,7 +60,7 @@ namespace p2p_irc
 							case TLV.Type.Hello:
 								p.TreatHello(d.peer, t);
 								break;
-							// TODO
+							// TODO: in particular GoAway and Neighbors
 						}
 					}
 				}

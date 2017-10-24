@@ -107,7 +107,10 @@ namespace p2p_irc
 			foreach (PeerAddress n in ns)
 			{
 				if (!IsRecentNeighbor(n))
+				{
+					com.SendMessage(n,messages.PackTLV(tlv_utils.goAway(2, "")));
 					neighborsTable.Remove(n);
+				}
 			}
 		}
 
