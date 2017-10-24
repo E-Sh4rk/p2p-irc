@@ -13,7 +13,7 @@ namespace p2p_irc
 
 	public struct PeerInfo
 	{
-		public long ID;
+		public ulong ID;
 		public DateTime lastHello;
 		public DateTime lastHelloLong;
 	}
@@ -93,17 +93,20 @@ namespace p2p_irc
 		public void SayHello()
 		{
 			// Short hello if not enough neighbours
-			PeerAddress[] sym = GetSymetricsNeighbors();
-			if (sym.Length < searchNeighborsThreshold)
+			if (GetSymetricsNeighbors().Length < searchNeighborsThreshold)
 			{
-				foreach (PeerAddress pot in potentialNeighbors)
+				foreach (PeerAddress p in potentialNeighbors)
 				{
-					if (!IsSymetricNeighbor(pot))
-						com.SendMessage(pot, messages.PackTLV(tlv_utils.shortHello()));
+					if (!IsSymetricNeighbor(p))
+						com.SendMessage(p, messages.PackTLV(tlv_utils.shortHello()));
 				}
 			}
 			// Long hello
-			// TODO
+			foreach (PeerAddress p in GetNeighbors())
+			{
+				ulong dest_ID = neighborsTable[p].ID;
+				com.SendMessage(p, messages.PackTLV(tlv_utils.longHello(dest_ID)));
+			}
 		}
 	}
 }
