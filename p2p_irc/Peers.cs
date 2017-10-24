@@ -41,6 +41,11 @@ namespace p2p_irc
 			tlv_utils = new TLV_utils(ID);
 		}
 
+		public void TreatHello(PeerAddress a, TLV hello)
+		{
+			// TODO
+		}
+
 		public bool IsRecentNeighbor(PeerAddress a)
 		{
 			try

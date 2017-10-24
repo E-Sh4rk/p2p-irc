@@ -10,6 +10,7 @@ namespace p2p_irc
 		Random r;
 		Peers p;
 		Communications com;
+		Messages messages;
 
 		public Protocol()
 		{
@@ -17,9 +18,10 @@ namespace p2p_irc
 			ID = (ulong)(r.NextDouble() * ulong.MaxValue);
 			com = new Communications();
 			p = new Peers(new System.Collections.Generic.List<PeerAddress>(), ID, com);
+			messages = new Messages(ID);
 		}
 
-		Thread t;
+		Thread thread;
 
 		void thread_procedure()
 		{
@@ -32,10 +34,30 @@ namespace p2p_irc
 
 		public void Run()
 		{
-			t = new Thread(new ThreadStart(thread_procedure));
-			t.Start();
+			thread = new Thread(new ThreadStart(thread_procedure));
+			thread.Start();
 
-			// TODO
+			while (true)
+			{
+				Communications.DataReceived? data = com.ReceiveMessage();
+				if (data.HasValue)
+				{
+					Communications.DataReceived d = data.Value;
+					TLV[] tlvs = messages.UnpackTLVs(d.data);
+					if (tlvs == null)
+						continue;
+					foreach (TLV t in tlvs)
+					{
+						switch (t.type)
+						{
+							case TLV.Type.Hello:
+								p.TreatHello(d.peer, t);
+								break;
+							// TODO
+						}
+					}
+				}
+			}
 		}
 	}
 }
