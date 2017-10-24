@@ -29,9 +29,16 @@ namespace p2p_irc
 		Dictionary<PeerAddress, PeerInfo> neighborsTable = new Dictionary<PeerAddress, PeerInfo>();
 		List<PeerAddress> potentialNeighbors;
 
-		public Peers(List<PeerAddress> potentialNeighbors)
+		TLV_utils tlv_utils;
+		Communications com;
+		Messages messages;
+
+		public Peers(List<PeerAddress> potentialNeighbors, ulong ID, Communications com)
 		{
 			this.potentialNeighbors = potentialNeighbors;
+			this.com = com;
+			messages = new Messages(ID);
+			tlv_utils = new TLV_utils(ID);
 		}
 
 		public bool IsRecentNeighbor(PeerAddress a)
@@ -85,13 +92,18 @@ namespace p2p_irc
 
 		public void SayHello()
 		{
-			// Hello courts
-			if (GetSymetricsNeighbors().Length < searchNeighborsThreshold)
+			// Short hello if not enough neighbours
+			PeerAddress[] sym = GetSymetricsNeighbors();
+			if (sym.Length < searchNeighborsThreshold)
 			{
-
+				foreach (PeerAddress pot in potentialNeighbors)
+				{
+					if (!IsSymetricNeighbor(pot))
+						com.SendMessage(pot, messages.PackTLV(tlv_utils.shortHello()));
+				}
 			}
-			// Hello longs
-
+			// Long hello
+			// TODO
 		}
 	}
 }

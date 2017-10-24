@@ -38,6 +38,8 @@
     <Compile Include="Peers.cs" />
     <Compile Include="TLVs.cs" />
     <Compile Include="Messages.cs" />
+    <Compile Include="TLV_utils.cs" />
+    <Compile Include="Communications.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
 </Project>
