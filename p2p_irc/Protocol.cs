@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Net.Sockets;
+using System.Threading;
 
 namespace p2p_irc
 {
@@ -8,16 +9,29 @@ namespace p2p_irc
 		ulong ID;
 		Random r;
 		Peers p;
-		UdpClient socket;
+		Communications com;
 
 		public Protocol()
 		{
 			r = new Random();
 			ID = (ulong)(r.NextDouble() * ulong.MaxValue);
-			socket = new UdpClient(AddressFamily.InterNetworkV6); // No need to bind the socket...
-			// For .NET framework < 4.5 : https://blogs.msdn.microsoft.com/webdev/2013/01/08/dual-mode-sockets-never-create-an-ipv4-socket-again/
-			socket.Client.DualMode = true;
-			p = new Peers(new System.Collections.Generic.List<PeerAddress>(), ID, new Communications(socket));
+			com = new Communications();
+			p = new Peers(new System.Collections.Generic.List<PeerAddress>(), ID, com);
+		}
+
+		Thread t;
+
+		void thread_procedure()
+		{
+			// TODO
+		}
+
+		public void Run()
+		{
+			t = new Thread(new ThreadStart(thread_procedure));
+			t.Start();
+
+			// TODO
 		}
 	}
 }
