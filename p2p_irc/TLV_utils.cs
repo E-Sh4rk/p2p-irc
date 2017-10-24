@@ -33,5 +33,30 @@ namespace p2p_irc
 			Debug.Assert(t.body.Length == 16);
 			return t;
 		}
+
+		public ulong? getHelloSource(TLV tlv)
+		{
+			try
+			{
+				if (tlv.type != TLV.Type.Hello)
+					return null;
+				if (tlv.body.Length != 8 && tlv.body.Length != 16)
+					return null;
+				return BitConverter.ToUInt64(tlv.body, 0);
+			}
+			catch { return null; }
+		}
+		public bool isValidLongHello(TLV tlv)
+		{
+			try
+			{
+				if (tlv.type != TLV.Type.Hello)
+					return false;
+				if (tlv.body.Length != 16)
+					return false;
+				return BitConverter.ToUInt64(tlv.body, 8) == ID;
+			}
+			catch { return false; }
+		}
 	}
 }

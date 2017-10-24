@@ -41,9 +41,27 @@ namespace p2p_irc
 			tlv_utils = new TLV_utils(ID);
 		}
 
+		// TODO : Make it thread safe
+
 		public void TreatHello(PeerAddress a, TLV hello)
 		{
-			// TODO
+			ulong? src_ID = tlv_utils.getHelloSource(hello);
+			if (src_ID.HasValue)
+			{
+				PeerInfo pi;
+				if (neighborsTable.ContainsKey(a))
+					pi = neighborsTable[a];
+				else
+				{
+					pi = new PeerInfo();
+					pi.lastHelloLong = DateTime.Now.AddSeconds(-symetricDelay);
+				}
+				pi.ID = src_ID.Value;
+				pi.lastHello = DateTime.Now;
+				if (tlv_utils.isValidLongHello(hello))
+					pi.lastHelloLong = DateTime.Now;
+				neighborsTable[a] = pi;
+			}
 		}
 
 		public bool IsRecentNeighbor(PeerAddress a)
