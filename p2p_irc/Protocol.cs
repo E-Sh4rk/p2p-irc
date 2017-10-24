@@ -23,7 +23,11 @@ namespace p2p_irc
 
 		void thread_procedure()
 		{
-			// TODO
+			while (true)
+			{
+				p.SayHello();
+				Thread.Sleep(Peers.helloNeighborsDelay * 1000);
+			}
 		}
 
 		public void Run()

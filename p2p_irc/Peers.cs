@@ -20,11 +20,11 @@ namespace p2p_irc
 
 	public class Peers
 	{
-		const int recentDelay = 60 * 2; // Durée max pour qu'un voisin soit considéré comme récent
-		const int symetricDelay = 60 * 2; // Durée max pour qu'un voisin soit considéré comme symétrique
+		public const int recentDelay = 60 * 2; // Durée max pour qu'un voisin soit considéré comme récent
+		public const int symetricDelay = 60 * 2; // Durée max pour qu'un voisin soit considéré comme symétrique
 
-		const int searchNeighborsThreshold = 8;
-		const int helloNeighborsDelay = 30;
+		public const int searchNeighborsThreshold = 8;
+		public const int helloNeighborsDelay = 30;
 
 		Dictionary<PeerAddress, PeerInfo> neighborsTable = new Dictionary<PeerAddress, PeerInfo>();
 		List<PeerAddress> potentialNeighbors;
