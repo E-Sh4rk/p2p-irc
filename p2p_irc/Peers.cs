@@ -23,7 +23,8 @@ namespace p2p_irc
 		const int recentDelay = 60 * 2; // Durée max pour qu'un voisin soit considéré comme récent
 		const int symetricDelay = 60 * 2; // Durée max pour qu'un voisin soit considéré comme symétrique
 
-		const int minSymetricNeighbors = 8;
+		const int searchNeighborsThreshold = 8;
+		const int helloNeighborsDelay = 30;
 
 		Dictionary<PeerAddress, PeerInfo> neighborsTable = new Dictionary<PeerAddress, PeerInfo>();
 		List<PeerAddress> potentialNeighbors;
@@ -58,6 +59,39 @@ namespace p2p_irc
 		public PeerAddress[] GetNeighbors()
 		{
 			return neighborsTable.Keys.ToArray();
+		}
+
+		public PeerAddress[] GetSymetricsNeighbors()
+		{
+			List<PeerAddress> sn = new List<PeerAddress>();
+			foreach (PeerAddress a in neighborsTable.Keys)
+			{
+				if (IsSymetricNeighbor(a))
+					sn.Add(a);
+			}
+			return sn.ToArray();
+		}
+
+		public PeerAddress[] GetRecentsNeighbors()
+		{
+			List<PeerAddress> sn = new List<PeerAddress>();
+			foreach (PeerAddress a in neighborsTable.Keys)
+			{
+				if (IsRecentNeighbor(a))
+					sn.Add(a);
+			}
+			return sn.ToArray();
+		}
+
+		public void SayHello()
+		{
+			// Hello courts
+			if (GetSymetricsNeighbors().Length < searchNeighborsThreshold)
+			{
+
+			}
+			// Hello longs
+
 		}
 	}
 }
