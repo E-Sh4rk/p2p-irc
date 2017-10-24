@@ -22,18 +22,24 @@ namespace p2p_irc
 		}
 
 		Thread thread;
-
+		DateTime lastHelloSaid;
 		void thread_procedure()
 		{
 			while (true)
 			{
-				p.SayHello();
-				Thread.Sleep(Peers.helloNeighborsDelay * 1000);
+				p.RemoveOldNeighbors();
+				if (lastHelloSaid.AddSeconds(Peers.helloNeighborsDelay) <= DateTime.Now)
+				{
+					p.SayHello();
+					lastHelloSaid = DateTime.Now;
+				}
+				Thread.Sleep(1000);
 			}
 		}
 
 		public void Run()
 		{
+			lastHelloSaid = DateTime.Now.AddSeconds(-Peers.helloNeighborsDelay);
 			thread = new Thread(new ThreadStart(thread_procedure));
 			thread.Start();
 

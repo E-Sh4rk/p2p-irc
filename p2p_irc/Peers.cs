@@ -64,22 +64,11 @@ namespace p2p_irc
 			}
 		}
 
-		public bool IsRecentNeighbor(PeerAddress a)
-		{
-			try
-			{
-				if (neighborsTable[a].lastHello.AddSeconds(recentDelay) >= DateTime.Now)
-					return true;
-				return false;
-			}
-			catch { return false; }
-		}
-
 		public bool IsSymetricNeighbor(PeerAddress a)
 		{
 			try
 			{
-				if (neighborsTable[a].lastHelloLong.AddSeconds(symetricDelay) >= DateTime.Now)
+				if (neighborsTable[a].lastHelloLong.AddSeconds(symetricDelay) > DateTime.Now)
 					return true;
 				return false;
 			}
@@ -102,15 +91,24 @@ namespace p2p_irc
 			return sn.ToArray();
 		}
 
-		public PeerAddress[] GetRecentsNeighbors()
+		bool IsRecentNeighbor(PeerAddress a)
 		{
-			List<PeerAddress> sn = new List<PeerAddress>();
-			foreach (PeerAddress a in neighborsTable.Keys)
+			try
 			{
-				if (IsRecentNeighbor(a))
-					sn.Add(a);
+				if (neighborsTable[a].lastHello.AddSeconds(recentDelay) > DateTime.Now)
+					return true;
+				return false;
 			}
-			return sn.ToArray();
+			catch { return false; }
+		}
+		public void RemoveOldNeighbors()
+		{
+			PeerAddress[] ns = GetNeighbors();
+			foreach (PeerAddress n in ns)
+			{
+				if (!IsRecentNeighbor(n))
+					neighborsTable.Remove(n);
+			}
 		}
 
 		public void SayHello()
