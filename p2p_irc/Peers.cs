@@ -43,25 +43,40 @@ namespace p2p_irc
 
 		// TODO : Make it thread safe
 
-		public void TreatHello(PeerAddress a, TLV hello)
+		public void TreatTLV(PeerAddress a, TLV tlv)
 		{
-			ulong? src_ID = tlv_utils.getHelloSource(hello);
-			if (src_ID.HasValue)
+			try
 			{
-				PeerInfo pi;
-				if (neighborsTable.ContainsKey(a))
-					pi = neighborsTable[a];
-				else
+				switch (tlv.type)
 				{
-					pi = new PeerInfo();
-					pi.lastHelloLong = DateTime.Now.AddSeconds(-symetricDelay);
+					case TLV.Type.Hello:
+						ulong? src_ID = tlv_utils.getHelloSource(tlv);
+						if (src_ID.HasValue)
+						{
+							PeerInfo pi;
+							if (neighborsTable.ContainsKey(a))
+								pi = neighborsTable[a];
+							else
+							{
+								pi = new PeerInfo();
+								pi.lastHelloLong = DateTime.Now.AddSeconds(-symetricDelay);
+							}
+							pi.ID = src_ID.Value;
+							pi.lastHello = DateTime.Now;
+							if (tlv_utils.isValidLongHello(tlv))
+								pi.lastHelloLong = DateTime.Now;
+							neighborsTable[a] = pi;
+						}
+						break;
+					case TLV.Type.GoAway:
+						byte? reason = tlv_utils.getGoAwayCode(tlv);
+						if (reason.HasValue)
+						{
+							try { neighborsTable.Remove(a); } catch { }
+						}
+						break;
 				}
-				pi.ID = src_ID.Value;
-				pi.lastHello = DateTime.Now;
-				if (tlv_utils.isValidLongHello(hello))
-					pi.lastHelloLong = DateTime.Now;
-				neighborsTable[a] = pi;
-			}
+			} catch { }
 		}
 
 		public bool IsSymetricNeighbor(PeerAddress a)
@@ -109,7 +124,7 @@ namespace p2p_irc
 				if (!IsRecentNeighbor(n))
 				{
 					com.SendMessage(n,messages.PackTLV(tlv_utils.goAway(2, "")));
-					neighborsTable.Remove(n);
+					try { neighborsTable.Remove(n); } catch { }
 				}
 			}
 		}

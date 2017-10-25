@@ -58,9 +58,10 @@ namespace p2p_irc
 						switch (t.type)
 						{
 							case TLV.Type.Hello:
-								p.TreatHello(d.peer, t);
+							case TLV.Type.GoAway:
+								p.TreatTLV(d.peer, t);
 								break;
-							// TODO: in particular GoAway and Neighbors
+							// TODO: in particular Neighbors
 						}
 					}
 				}

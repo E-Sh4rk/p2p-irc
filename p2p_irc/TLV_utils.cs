@@ -59,6 +59,7 @@ namespace p2p_irc
 			}
 			catch { return false; }
 		}
+
 		// ----- GO_AWAY -----
 		public TLV goAway(byte code, string message)
 		{
@@ -70,7 +71,7 @@ namespace p2p_irc
 			Array.Copy(msg, 0, t.body, 1, msg.Length);
 			return t;
 		}
-		public int? getGoAwayCode(TLV tlv)
+		public byte? getGoAwayCode(TLV tlv)
 		{
 			try
 			{
@@ -84,6 +85,7 @@ namespace p2p_irc
 			}
 			catch { return null; }
 		}
+
 		// ----- NEIGHBOUR -----
 		public TLV neighbour(PeerAddress pa)
 		{
