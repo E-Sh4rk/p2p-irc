@@ -23,6 +23,7 @@ namespace p2p_irc
 
 		Thread thread;
 		DateTime lastHelloSaid;
+		DateTime lastNeighborsSaid;
 		void thread_procedure()
 		{
 			while (true)
@@ -33,7 +34,11 @@ namespace p2p_irc
 					p.SayHello();
 					lastHelloSaid = DateTime.Now;
 				}
-				// TODO: Send Neighbors
+				if (lastNeighborsSaid.AddSeconds(Peers.sendNeighborsDelay) <= DateTime.Now)
+				{
+					p.SendNeighbors();
+					lastNeighborsSaid = DateTime.Now;
+				}
 				Thread.Sleep(1000);
 			}
 		}
@@ -41,6 +46,7 @@ namespace p2p_irc
 		public void Run()
 		{
 			lastHelloSaid = DateTime.Now.AddSeconds(-Peers.helloNeighborsDelay);
+			lastNeighborsSaid = DateTime.Now;
 			thread = new Thread(new ThreadStart(thread_procedure));
 			thread.Start();
 

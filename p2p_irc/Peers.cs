@@ -25,6 +25,7 @@ namespace p2p_irc
 
 		public const int searchNeighborsThreshold = 8;
 		public const int helloNeighborsDelay = 30;
+		public const int sendNeighborsDelay = 60;
 
 		Dictionary<PeerAddress, PeerInfo> neighborsTable = new Dictionary<PeerAddress, PeerInfo>();
 		List<PeerAddress> potentialNeighbors;
@@ -42,6 +43,7 @@ namespace p2p_irc
 		}
 
 		// TODO : Make it thread safe
+		// TODO : Delete some potential neighbors sometimes?
 
 		public void TreatTLV(PeerAddress a, TLV tlv)
 		{
@@ -146,6 +148,11 @@ namespace p2p_irc
 				ulong dest_ID = neighborsTable[p].ID;
 				com.SendMessage(p, messages.PackTLV(tlv_utils.longHello(dest_ID)));
 			}
+		}
+
+		public void SendNeighbors()
+		{
+			// TODO
 		}
 	}
 }
