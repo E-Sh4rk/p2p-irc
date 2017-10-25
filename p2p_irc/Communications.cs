@@ -44,5 +44,14 @@ namespace p2p_irc
 			catch { Console.WriteLine("[ERROR] Error while receiving datagram."); }
 			return null;
 		}
+		public bool IsSelf(PeerAddress pa)
+		{
+			IPEndPoint ep = (IPEndPoint)socket.Client.LocalEndPoint;
+			if (!pa.ip.MapToIPv6().Equals(ep.Address.MapToIPv6()))
+				return false;
+			if (pa.port != ep.Port)
+				return false;
+			return true;
+		}
 	}
 }

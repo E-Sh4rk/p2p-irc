@@ -67,7 +67,7 @@ namespace p2p_irc
 							case TLV.Type.GoAway:
 								p.TreatTLV(d.peer, t);
 								break;
-							// TODO: in particular Neighbors
+								// TODO: in particular Neighbors (test not self)
 						}
 					}
 				}
