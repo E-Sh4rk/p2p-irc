@@ -97,9 +97,9 @@ namespace p2p_irc
 			return PackBody(tlv_reader.Write(t));
 		}
 
-		public byte[] PackTLVs(TLV[] t)
+		public byte[] PackTLVs(TLV[] ts)
 		{
-			throw new NotImplementedException();
+			return PackBody(tlv_reader.WriteAll(ts));
 		}
 	}
 }

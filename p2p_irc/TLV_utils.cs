@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Diagnostics;
+using System.Net;
 using System.Text;
 
 namespace p2p_irc
@@ -68,6 +69,47 @@ namespace p2p_irc
 			t.body[0] = code;
 			Array.Copy(msg, 0, t.body, 1, msg.Length);
 			return t;
+		}
+		public int? getGoAwayCode(TLV tlv)
+		{
+			try
+			{
+				try
+				{
+					string msg = Encoding.UTF8.GetString(tlv.body, 1, tlv.body.Length - 1);
+					if (!String.IsNullOrEmpty(msg))
+						Console.WriteLine("[GO_AWAY] " + msg);
+				} catch { Console.WriteLine("[GO_AWAY] Invalid message."); }
+				return tlv.body[0];
+			}
+			catch { return null; }
+		}
+		// ----- NEIGHBOUR -----
+		public TLV neighbour(PeerAddress pa)
+		{
+			TLV t = new TLV();
+			t.type = TLV.Type.Neighbour;
+			byte[] ip = pa.ip.MapToIPv6().GetAddressBytes();
+			t.body = new byte[ip.Length + 4];
+			Array.Copy(ip, t.body, ip.Length);
+			Array.Copy(BitConverter.GetBytes(pa.port), 0, t.body, t.body.Length-4, 4);
+			Debug.Assert(t.body.Length == 20);
+			return t;
+		}
+		public PeerAddress? getNeighbourAddress(TLV tlv)
+		{
+			try
+			{
+				if (tlv.type != TLV.Type.Neighbour)
+					return null;
+				PeerAddress pa = new PeerAddress();
+				byte[] byte_addr = new byte[tlv.body.Length - 4];
+				Array.Copy(tlv.body, byte_addr, byte_addr.Length);
+				pa.ip = new IPAddress(byte_addr).MapToIPv6();
+				pa.port = BitConverter.ToInt32(tlv.body, tlv.body.Length - 4);
+				return pa;
+			}
+			catch { return null; }
 		}
 	}
 }

@@ -78,6 +78,7 @@ namespace p2p_irc
 			return tlvs.ToArray();
 		}
 
+		// TODO: 1024 length max
 		public byte[] Write(TLV tlv)
 		{
 			try
@@ -91,9 +92,26 @@ namespace p2p_irc
 			catch { return null; }
 		}
 
-		public byte[] WriteAll(TLV[] tlv)
+		public byte[] WriteAll(TLV[] tlvs)
 		{
-			throw new NotImplementedException();
+			int total_len = 0;
+			List<byte[]> bs = new List<byte[]>();
+			foreach (TLV t in tlvs)
+			{
+				byte[] b = Write(t);
+				if (b == null)
+					continue;
+				total_len += b.Length;
+				bs.Add(b);
+			}
+			byte[] res = new byte[total_len];
+			int current = 0;
+			foreach (byte[] b in bs)
+			{
+				Array.Copy(b, 0, res, current, b.Length);
+				current += b.Length;
+			}
+			return res;
 		}
 	}
 }
