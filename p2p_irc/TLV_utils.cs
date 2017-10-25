@@ -8,10 +8,12 @@ namespace p2p_irc
 	public class TLV_utils
 	{
 		ulong ID;
+		uint lastNonce;
 
 		public TLV_utils(ulong ID)
 		{
 			this.ID = ID;
+			this.lastNonce = 0;
 		}
 
 		// ----- HELLO -----
@@ -112,6 +114,27 @@ namespace p2p_irc
 				return pa;
 			}
 			catch { return null; }
+		}
+
+		// ----- DATA -----
+		public uint nextDataNonce()
+		{
+			lastNonce++;
+			return lastNonce;
+		}
+		public TLV data(uint nonce, string message)
+		{
+			byte[] msg_b = Encoding.UTF8.GetBytes(message);
+			byte[] ID_b = BitConverter.GetBytes(ID);
+			byte[] nonce_b = BitConverter.GetBytes(nonce);
+			TLV tlv = new TLV();
+			tlv.type = TLV.Type.Data;
+			tlv.body = new byte[msg_b.Length + ID_b.Length + nonce_b.Length];
+			Array.Copy(ID_b,tlv.body,ID_b.Length);
+			Array.Copy(nonce_b, 0, tlv.body, ID_b.Length, nonce_b.Length);
+			Array.Copy(msg_b, 0, tlv.body, ID_b.Length+nonce_b.Length, msg_b.Length);
+			Debug.Assert(tlv.body.Length == msg_b.Length + 12);
+			return tlv;
 		}
 	}
 }
