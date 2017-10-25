@@ -13,9 +13,12 @@ namespace p2p_irc
 		}
 
 		UdpClient socket;
-		public Communications()
+		public Communications(int? port)
 		{
-			socket = new UdpClient(AddressFamily.InterNetworkV6); // No need to bind the socket...
+			if (port.HasValue)
+				socket = new UdpClient(port.Value, AddressFamily.InterNetworkV6); // Create a new socket and bind it to the port
+			else
+				socket = new UdpClient(AddressFamily.InterNetworkV6); // Create a new socket without binding it
 			// For .NET framework < 4.5 : https://blogs.msdn.microsoft.com/webdev/2013/01/08/dual-mode-sockets-never-create-an-ipv4-socket-again/
 			socket.Client.DualMode = true;
 		}
