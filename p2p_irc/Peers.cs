@@ -77,6 +77,14 @@ namespace p2p_irc
 							try { neighborsTable.Remove(a); } catch { }
 						}
 						break;
+					case TLV.Type.Neighbour:
+						PeerAddress? pa = tlv_utils.getNeighbourAddress(tlv);
+						if (pa.HasValue)
+						{
+							if (!potentialNeighbors.Contains(pa.Value) && !com.IsSelf(pa.Value))
+								potentialNeighbors.Add(pa.Value);
+						}
+						break;
 				}
 			} catch { }
 		}
