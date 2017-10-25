@@ -56,6 +56,8 @@ namespace p2p_irc
 				if (data.HasValue)
 				{
 					Communications.DataReceived d = data.Value;
+					if (com.IsSelf(d.peer))
+						continue;
 					TLV[] tlvs = messages.UnpackTLVs(d.data);
 					if (tlvs == null)
 						continue;

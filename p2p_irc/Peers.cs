@@ -153,12 +153,18 @@ namespace p2p_irc
 		public void SendNeighbors()
 		{
 			PeerAddress[] sym = GetSymetricsNeighbors();
-			TLV[] tlvs = new TLV[sym.Length];
-			for (int i = 0; i < tlvs.Length; i++)
-				tlvs[i] = tlv_utils.neighbour(sym[i]);
-			byte[] msg = messages.PackTLVs(tlvs);
 			foreach (PeerAddress p in GetNeighbors())
+			{
+				List<TLV> tlvs = new List<TLV>();
+				foreach (PeerAddress pa in sym)
+				{
+					if (!pa.Equals(p))
+						tlvs.Add(tlv_utils.neighbour(pa));
+				}
+
+				byte[] msg = messages.PackTLVs(tlvs.ToArray());
 				com.SendMessage(p, msg);
+			}
 		}
 	}
 }
