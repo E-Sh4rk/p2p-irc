@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Net;
 using System.Linq;
+using System.Diagnostics;
 
 namespace p2p_irc
 {
@@ -14,8 +15,8 @@ namespace p2p_irc
 	public struct PeerInfo
 	{
 		public ulong ID;
-		public DateTime lastHello;
-		public DateTime lastHelloLong;
+		public Stopwatch lastHello;
+		public Stopwatch lastHelloLong;
 	}
 
 	public class Peers
@@ -34,12 +35,12 @@ namespace p2p_irc
 		Communications com;
 		Messages messages;
 
-		public Peers(List<PeerAddress> potentialNeighbors, ulong ID, Communications com)
+		public Peers(List<PeerAddress> potentialNeighbors, Communications com, TLV_utils tlv_utils, Messages messages)
 		{
 			this.potentialNeighbors = potentialNeighbors;
 			this.com = com;
-			messages = new Messages(ID);
-			tlv_utils = new TLV_utils(ID);
+			this.messages = messages;
+			this.tlv_utils = tlv_utils;
 		}
 
 		// TODO : Make it thread safe
@@ -61,12 +62,12 @@ namespace p2p_irc
 							else
 							{
 								pi = new PeerInfo();
-								pi.lastHelloLong = DateTime.Now.AddSeconds(-symetricDelay);
+								pi.lastHelloLong = null;
 							}
 							pi.ID = src_ID.Value;
-							pi.lastHello = DateTime.Now;
+							pi.lastHello = Stopwatch.StartNew();
 							if (tlv_utils.isValidLongHello(tlv))
-								pi.lastHelloLong = DateTime.Now;
+								pi.lastHelloLong = Stopwatch.StartNew();
 							neighborsTable[a] = pi;
 						}
 						break;
@@ -93,8 +94,9 @@ namespace p2p_irc
 		{
 			try
 			{
-				if (neighborsTable[a].lastHelloLong.AddSeconds(symetricDelay) > DateTime.Now)
-					return true;
+				if (neighborsTable[a].lastHelloLong != null)
+					if (neighborsTable[a].lastHelloLong.ElapsedMilliseconds <= symetricDelay * 1000)
+						return true;
 				return false;
 			}
 			catch { return false; }
@@ -120,7 +122,8 @@ namespace p2p_irc
 		{
 			try
 			{
-				if (neighborsTable[a].lastHello.AddSeconds(recentDelay) > DateTime.Now)
+				if (neighborsTable[a].lastHello != null)
+					if (neighborsTable[a].lastHello.ElapsedMilliseconds <= recentDelay * 1000)
 					return true;
 				return false;
 			}

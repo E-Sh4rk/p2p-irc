@@ -21,12 +21,7 @@ namespace p2p_irc
 	}
 	public class TLVs
 	{
-		ulong ID;
-
-		public TLVs(ulong ID)
-		{
-			this.ID = ID;
-		}
+		public TLVs() { }
 
 		// Read the TLV at the given position, and update the pointer offset. Return null if it is a Pad or an incorrect/unknown TLV.
 		public TLV? Read(byte[] buffer, ref int offset)

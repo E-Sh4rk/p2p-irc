@@ -40,6 +40,7 @@
     <Compile Include="Messages.cs" />
     <Compile Include="TLV_utils.cs" />
     <Compile Include="Communications.cs" />
+    <Compile Include="Chat.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
 </Project>

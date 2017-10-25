@@ -8,7 +8,6 @@ namespace p2p_irc
 		const byte magic = 93;
 		const byte version = 0;
 
-		ulong ID;
 		TLVs tlv_reader;
 
 		struct MessageHeader
@@ -19,10 +18,9 @@ namespace p2p_irc
 			public int body_offset; // Not in the header of the message, but useful
 		}
 
-		public Messages(ulong ID)
+		public Messages()
 		{
-			this.ID = ID;
-			tlv_reader = new TLVs(ID);
+			tlv_reader = new TLVs();
 		}
 
 		MessageHeader ReadHeader(byte[] buffer) // Can throw an exception!
