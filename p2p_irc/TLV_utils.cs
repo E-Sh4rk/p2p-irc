@@ -77,6 +77,8 @@ namespace p2p_irc
 		{
 			try
 			{
+				if (tlv.type != TLV.Type.GoAway)
+					return null;
 				try
 				{
 					string msg = Encoding.UTF8.GetString(tlv.body, 1, tlv.body.Length - 1);
@@ -117,6 +119,12 @@ namespace p2p_irc
 		}
 
 		// ----- DATA -----
+		public struct DataMessage
+		{
+			public ulong sender;
+			public uint nonce;
+			public string msg;
+		}
 		public uint nextDataNonce()
 		{
 			lastNonce++;
@@ -135,6 +143,69 @@ namespace p2p_irc
 			Array.Copy(msg_b, 0, tlv.body, ID_b.Length+nonce_b.Length, msg_b.Length);
 			Debug.Assert(tlv.body.Length == msg_b.Length + 12);
 			return tlv;
+		}
+		public DataMessage? getDataMessage(TLV tlv)
+		{
+			try
+			{
+				if (tlv.type != TLV.Type.Data)
+					return null;
+				DataMessage dm = new DataMessage();
+				dm.sender = BitConverter.ToUInt64(tlv.body, 0);
+				dm.nonce = BitConverter.ToUInt32(tlv.body, 8);
+				dm.msg = Encoding.UTF8.GetString(tlv.body, 12, tlv.body.Length - 12);
+				return dm;
+			}
+			catch { return null; }
+		}
+
+		// ----- ACK -----
+		public TLV ack(ulong sender, uint nonce)
+		{
+			byte[] ID_b = BitConverter.GetBytes(sender);
+			byte[] nonce_b = BitConverter.GetBytes(nonce);
+			TLV tlv = new TLV();
+			tlv.type = TLV.Type.Ack;
+			tlv.body = new byte[ID_b.Length + nonce_b.Length];
+			Array.Copy(ID_b, tlv.body, ID_b.Length);
+			Array.Copy(nonce_b, 0, tlv.body, ID_b.Length, nonce_b.Length);
+			Debug.Assert(tlv.body.Length == 12);
+			return tlv;
+		}
+		public DataMessage? getAckMessage(TLV tlv)
+		{
+			try
+			{
+				if (tlv.type != TLV.Type.Ack)
+					return null;
+				if (tlv.body.Length != 12)
+					return null;
+				DataMessage dm = new DataMessage();
+				dm.sender = BitConverter.ToUInt64(tlv.body, 0);
+				dm.nonce = BitConverter.ToUInt32(tlv.body, 8);
+				dm.msg = null;
+				return dm;
+			}
+			catch { return null; }
+		}
+
+		// ----- WARNING -----
+		public TLV warning(string message)
+		{
+			TLV t = new TLV();
+			t.type = TLV.Type.Warning;
+			t.body = Encoding.UTF8.GetBytes(message);
+			return t;
+		}
+		public string getWarningMessage(TLV tlv)
+		{
+			try
+			{
+				if (tlv.type != TLV.Type.Warning)
+					return null;
+				return Encoding.UTF8.GetString(tlv.body);
+			}
+			catch { return null; }
 		}
 	}
 }
