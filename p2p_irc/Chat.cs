@@ -21,6 +21,7 @@ namespace p2p_irc
 	public struct MessageFloodInfo
 	{
 		public Stopwatch timeElapsed;
+		public string msg;
 		public Dictionary<PeerAddress, NeighborFloodInfo> neighbors;
 	}
 
@@ -54,7 +55,7 @@ namespace p2p_irc
 			int res = (int)(Math.Pow(2.0, numberAttempts - 1)*1000.0);
 			return res + r.Next(res);
 		}
-		MessageFloodInfo InitNewFloodInfo()
+		MessageFloodInfo InitNewFloodInfo(string msg)
 		{
 			Dictionary<PeerAddress, NeighborFloodInfo> neighbors = new Dictionary<PeerAddress, NeighborFloodInfo>();
 			foreach (PeerAddress p in peers.GetSymetricsNeighbors())
@@ -68,6 +69,7 @@ namespace p2p_irc
 			MessageFloodInfo mii = new MessageFloodInfo();
 			mii.neighbors = neighbors;
 			mii.timeElapsed = Stopwatch.StartNew();
+			mii.msg = msg;
 			return mii;
 		}
 
@@ -89,7 +91,7 @@ namespace p2p_irc
 							// Adding message to the flooding list...
 							if (!recent_messages.ContainsKey(mid))
 							{
-								MessageFloodInfo mii = InitNewFloodInfo();
+								MessageFloodInfo mii = InitNewFloodInfo(dm.Value.msg);
 								recent_messages[mid] = mii;
 								new_message_action(mid.sender, dm.Value.msg);
 							}
@@ -130,13 +132,32 @@ namespace p2p_irc
 			foreach (MessageIdentifier m in recent_mes)
 			{
 				if (!IsRecentMessage(m))
-					try { recent_messages.Remove(m); } catch { }
+					recent_messages.Remove(m);
 			}
 		}
 
 		public void Flood()
 		{
-			// TODO (+ dont forget to delete non-symetric neighbors from the list)
+			foreach (MessageIdentifier m in recent_messages.Keys)
+			{
+				PeerAddress[] pas = recent_messages[m].neighbors.Keys.ToArray();
+				foreach (PeerAddress pa in pas)
+				{
+					if (!peers.IsSymetricNeighbor(pa))
+						recent_messages[m].neighbors.Remove(pa);
+					else
+					{
+						NeighborFloodInfo nfi = recent_messages[m].neighbors[pa];
+						if (nfi.lastAttempt.ElapsedMilliseconds >= nfi.nextAttemptMillisecond)
+						{
+							nfi.numberAttempts++;
+							nfi.lastAttempt = Stopwatch.StartNew();
+							nfi.nextAttemptMillisecond = ComputeNextFloodAttempt(nfi.numberAttempts);
+							com.SendMessage(pa, messages.PackTLV(tlv_utils.data(m.sender, m.nonce, recent_messages[m].msg)));
+						}
+					}
+				}
+			}
 		}
 
 		public void SendMessage(string msg)
@@ -144,7 +165,7 @@ namespace p2p_irc
 			MessageIdentifier mid = new MessageIdentifier();
 			mid.sender = tlv_utils.getSelfID();
 			mid.nonce = tlv_utils.nextDataNonce();
-			MessageFloodInfo mii = InitNewFloodInfo();
+			MessageFloodInfo mii = InitNewFloodInfo(msg);
 			recent_messages[mid] = mii;
 		}
 	}

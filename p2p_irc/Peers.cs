@@ -123,7 +123,7 @@ namespace p2p_irc
 			{
 				if (neighborsTable[a].lastHello != null)
 					if (neighborsTable[a].lastHello.ElapsedMilliseconds <= recentDelay * 1000)
-					return true;
+						return true;
 				return false;
 			}
 			catch { return false; }
@@ -136,7 +136,7 @@ namespace p2p_irc
 				if (!IsRecentNeighbor(n))
 				{
 					com.SendMessage(n,messages.PackTLV(tlv_utils.goAway(2, "")));
-					try { neighborsTable.Remove(n); } catch { }
+					neighborsTable.Remove(n);
 				}
 			}
 		}

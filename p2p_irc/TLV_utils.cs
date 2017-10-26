@@ -134,10 +134,10 @@ namespace p2p_irc
 		{
 			return ID;
 		}
-		public TLV data(uint nonce, string message)
+		public TLV data(ulong sender, uint nonce, string message)
 		{
 			byte[] msg_b = Encoding.UTF8.GetBytes(message);
-			byte[] ID_b = BitConverter.GetBytes(ID);
+			byte[] ID_b = BitConverter.GetBytes(sender);
 			byte[] nonce_b = BitConverter.GetBytes(nonce);
 			TLV tlv = new TLV();
 			tlv.type = TLV.Type.Data;
