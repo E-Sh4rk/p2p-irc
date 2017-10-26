@@ -46,6 +46,22 @@ namespace p2p_irc
 			recent_messages = new Dictionary<MessageIdentifier, MessageFloodInfo>();
 		}
 
+		MessageFloodInfo InitNewFloodInfo()
+		{
+			Dictionary<PeerAddress, NeighborFloodInfo> neighbors = new Dictionary<PeerAddress, NeighborFloodInfo>();
+			foreach (PeerAddress p in peers.GetSymetricsNeighbors())
+			{
+				NeighborFloodInfo nii = new NeighborFloodInfo();
+				nii.numberAttempts = 0;
+				nii.lastAttempt = Stopwatch.StartNew();
+				neighbors[p] = nii;
+			}
+			MessageFloodInfo mii = new MessageFloodInfo();
+			mii.neighbors = neighbors;
+			mii.timeElapsed = Stopwatch.StartNew();
+			return mii;
+		}
+
 		public void TreatTLV(PeerAddress a, TLV tlv)
 		{
 			try
@@ -64,19 +80,8 @@ namespace p2p_irc
 							// Adding message to the flooding list...
 							if (!recent_messages.ContainsKey(mid))
 							{
-								Dictionary<PeerAddress, NeighborFloodInfo> neighbors = new Dictionary<PeerAddress, NeighborFloodInfo>();
-								foreach (PeerAddress p in peers.GetSymetricsNeighbors())
-								{
-									NeighborFloodInfo nii = new NeighborFloodInfo();
-									nii.numberAttempts = 0;
-									nii.lastAttempt = Stopwatch.StartNew();
-									neighbors[p] = nii;
-								}
-								MessageFloodInfo mii = new MessageFloodInfo();
-								mii.neighbors = neighbors;
-								mii.timeElapsed = Stopwatch.StartNew();
+								MessageFloodInfo mii = InitNewFloodInfo();
 								recent_messages[mid] = mii;
-
 								new_message_action(mid.sender, dm.Value.msg);
 							}
 							// Ack & Remove from flooding list
@@ -127,7 +132,11 @@ namespace p2p_irc
 
 		public void SendMessage(string msg)
 		{
-			// TODO
+			MessageIdentifier mid = new MessageIdentifier();
+			mid.sender = tlv_utils.getSelfID();
+			mid.nonce = tlv_utils.nextDataNonce();
+			MessageFloodInfo mii = InitNewFloodInfo();
+			recent_messages[mid] = mii;
 		}
 	}
 }

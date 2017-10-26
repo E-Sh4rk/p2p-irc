@@ -130,6 +130,10 @@ namespace p2p_irc
 			lastNonce++;
 			return lastNonce;
 		}
+		public ulong getSelfID()
+		{
+			return ID;
+		}
 		public TLV data(uint nonce, string message)
 		{
 			byte[] msg_b = Encoding.UTF8.GetBytes(message);
