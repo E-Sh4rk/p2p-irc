@@ -28,11 +28,18 @@ namespace p2p_irc
 			c = new Chat(com, tlv_utils, messages, p, new_msg_action);
 		}
 
+		public void SendMessage(string msg)
+		{
+			// TODO : Make it thread safe
+			c.SendMessage(msg);
+		}
+
 		Thread thread;
 		Stopwatch lastHelloSaid;
 		Stopwatch lastNeighborsSaid;
 		void thread_procedure()
 		{
+			// TODO : Make it thread safe
 			while (true)
 			{
 				// Peers
@@ -51,11 +58,10 @@ namespace p2p_irc
 				c.RemoveOldMessages();
 				c.Flood();
 
-				Thread.Sleep(1000);
+				Thread.Sleep(r.Next(250, 750)); // A little random...
 			}
 		}
 
-		// TODO : Make it thread safe
 		public void Run()
 		{
 			lastHelloSaid = null;
@@ -63,6 +69,7 @@ namespace p2p_irc
 			thread = new Thread(new ThreadStart(thread_procedure));
 			thread.Start();
 
+			// TODO : Make it thread safe
 			while (true)
 			{
 				Communications.DataReceived? data = com.ReceiveMessage();

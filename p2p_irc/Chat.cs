@@ -124,5 +124,10 @@ namespace p2p_irc
 		{
 			// TODO
 		}
+
+		public void SendMessage(string msg)
+		{
+			// TODO
+		}
 	}
 }
