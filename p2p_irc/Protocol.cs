@@ -35,6 +35,7 @@ namespace p2p_irc
 		{
 			while (true)
 			{
+				// Peers
 				p.RemoveOldNeighbors();
 				if (lastHelloSaid == null || lastHelloSaid.ElapsedMilliseconds >= Peers.helloNeighborsDelay * 1000)
 				{
@@ -46,6 +47,9 @@ namespace p2p_irc
 					p.SendNeighbors();
 					lastNeighborsSaid = Stopwatch.StartNew();
 				}
+				// Flooding
+				c.RemoveOldMessages();
+
 				Thread.Sleep(1000);
 			}
 		}

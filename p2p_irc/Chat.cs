@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
 
 namespace p2p_irc
 {
@@ -24,6 +25,8 @@ namespace p2p_irc
 
 	public class Chat
 	{
+		public const int recentMessageDelay = 60 * 5; // Durée max pendant laquelle on continue à innonder
+
 		TLV_utils tlv_utils;
 		Communications com;
 		Messages messages;
@@ -51,7 +54,7 @@ namespace p2p_irc
 				{
 					case TLV.Type.Data:
 						TLV_utils.DataMessage? dm = tlv_utils.getDataMessage(tlv);
-						if (dm.HasValue)
+						if (dm.HasValue && peers.IsSymetricNeighbor(a))
 						{
 							MessageIdentifier mid = new MessageIdentifier();
 							mid.nonce = dm.Value.nonce;
@@ -83,6 +86,27 @@ namespace p2p_irc
 				}
 			}
 			catch { }
+		}
+
+		bool IsRecentMessage(MessageIdentifier m)
+		{
+			try
+			{
+				if (recent_messages[m].timeElapsed != null)
+					if (recent_messages[m].timeElapsed.ElapsedMilliseconds <= recentMessageDelay * 1000)
+						return true;
+				return false;
+			}
+			catch { return false; }
+		}
+		public void RemoveOldMessages()
+		{
+			MessageIdentifier[] recent_mes = recent_messages.Keys.ToArray();
+			foreach (MessageIdentifier m in recent_mes)
+			{
+				if (!IsRecentMessage(m))
+					try { recent_messages.Remove(m); } catch { }
+			}
 		}
 	}
 }
