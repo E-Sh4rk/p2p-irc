@@ -14,6 +14,7 @@ namespace p2p_irc
 	public struct NeighborFloodInfo
 	{
 		public Stopwatch lastAttempt;
+		public int nextAttemptMillisecond;
 		public int numberAttempts;
 	}
 
@@ -31,6 +32,7 @@ namespace p2p_irc
 		Communications com;
 		Messages messages;
 		Peers peers;
+		Random r;
 
 		Dictionary<MessageIdentifier, MessageFloodInfo> recent_messages;
 		public delegate void NewMessage(ulong id, string msg);
@@ -38,6 +40,7 @@ namespace p2p_irc
 
 		public Chat(Communications com, TLV_utils tlv_utils, Messages messages, Peers peers, NewMessage new_message_action)
 		{
+			r = new Random();
 			this.com = com;
 			this.messages = messages;
 			this.tlv_utils = tlv_utils;
@@ -46,6 +49,11 @@ namespace p2p_irc
 			recent_messages = new Dictionary<MessageIdentifier, MessageFloodInfo>();
 		}
 
+		int ComputeNextFloodAttempt(int numberAttempts)
+		{
+			int res = (int)(Math.Pow(2.0, numberAttempts - 1)*1000.0);
+			return res + r.Next(res);
+		}
 		MessageFloodInfo InitNewFloodInfo()
 		{
 			Dictionary<PeerAddress, NeighborFloodInfo> neighbors = new Dictionary<PeerAddress, NeighborFloodInfo>();
@@ -53,6 +61,7 @@ namespace p2p_irc
 			{
 				NeighborFloodInfo nii = new NeighborFloodInfo();
 				nii.numberAttempts = 0;
+				nii.nextAttemptMillisecond = ComputeNextFloodAttempt(nii.numberAttempts);
 				nii.lastAttempt = Stopwatch.StartNew();
 				neighbors[p] = nii;
 			}
@@ -127,7 +136,7 @@ namespace p2p_irc
 
 		public void Flood()
 		{
-			// TODO
+			// TODO (+ dont forget to delete non-symetric neighbors from the list)
 		}
 
 		public void SendMessage(string msg)
