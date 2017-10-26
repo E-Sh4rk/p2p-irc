@@ -49,11 +49,13 @@ namespace p2p_irc
 				}
 				// Flooding
 				c.RemoveOldMessages();
+				c.Flood();
 
 				Thread.Sleep(1000);
 			}
 		}
 
+		// TODO : Make it thread safe
 		public void Run()
 		{
 			lastHelloSaid = null;
@@ -82,6 +84,7 @@ namespace p2p_irc
 								p.TreatTLV(d.peer, t);
 								break;
 							case TLV.Type.Data:
+							case TLV.Type.Ack:
 								c.TreatTLV(d.peer, t);
 								break;
 						}

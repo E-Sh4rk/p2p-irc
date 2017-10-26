@@ -50,10 +50,11 @@ namespace p2p_irc
 		{
 			try
 			{
+				TLV_utils.DataMessage? dm;
 				switch (tlv.type)
 				{
 					case TLV.Type.Data:
-						TLV_utils.DataMessage? dm = tlv_utils.getDataMessage(tlv);
+						dm = tlv_utils.getDataMessage(tlv);
 						if (dm.HasValue && peers.IsSymetricNeighbor(a))
 						{
 							MessageIdentifier mid = new MessageIdentifier();
@@ -83,6 +84,16 @@ namespace p2p_irc
 							try { recent_messages[mid].neighbors.Remove(a); } catch { }
 						}
 						break;
+					case TLV.Type.Ack:
+						dm = tlv_utils.getAckMessage(tlv);
+						if (dm.HasValue && peers.IsSymetricNeighbor(a))
+						{
+							MessageIdentifier mid = new MessageIdentifier();
+							mid.nonce = dm.Value.nonce;
+							mid.sender = dm.Value.sender;
+							try { recent_messages[mid].neighbors.Remove(a); } catch { }
+						}
+						break;
 				}
 			}
 			catch { }
@@ -107,6 +118,11 @@ namespace p2p_irc
 				if (!IsRecentMessage(m))
 					try { recent_messages.Remove(m); } catch { }
 			}
+		}
+
+		public void Flood()
+		{
+			// TODO
 		}
 	}
 }

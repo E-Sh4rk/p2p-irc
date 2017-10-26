@@ -43,7 +43,6 @@ namespace p2p_irc
 			this.tlv_utils = tlv_utils;
 		}
 
-		// TODO : Make it thread safe
 		// TODO : Delete some potential neighbors sometimes?
 
 		public void TreatTLV(PeerAddress a, TLV tlv)
