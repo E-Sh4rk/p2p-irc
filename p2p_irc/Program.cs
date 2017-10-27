@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Net;
 using System.Threading;
 
 namespace p2p_irc
@@ -15,7 +16,12 @@ namespace p2p_irc
 			Console.WriteLine("This project is only used for debugging.");
 			Console.WriteLine("Please use p2p_ui project if you want to have an UI interface.\n");
 			Console.WriteLine("Starting the chat...");
-			Protocol p = new Protocol(null, on_new_message);
+
+			PeerAddress pa = new PeerAddress();
+			pa.port = 1212;
+			pa.ip = Dns.GetHostEntry("jch.irif.fr").AddressList[0];
+			Protocol p = new Protocol(null, new PeerAddress[] { pa }, on_new_message);
+
 			Thread th = new Thread(new ThreadStart(p.Run));
 			th.Start();
 			while (true)

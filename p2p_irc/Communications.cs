@@ -26,7 +26,7 @@ namespace p2p_irc
 		{
 			try
 			{
-				IPEndPoint ep = new IPEndPoint(pa.ip, pa.port);
+				IPEndPoint ep = new IPEndPoint(pa.ip.MapToIPv6(), pa.port);
 				socket.Send(msg, msg.Length, ep);
 			}
 			catch { Console.WriteLine("[ERROR] Error while sending datagram."); }
@@ -39,7 +39,7 @@ namespace p2p_irc
 				IPEndPoint endpoint = new IPEndPoint(IPAddress.Any, 0);
 				res.data = socket.Receive(ref endpoint);
 				PeerAddress pa = new PeerAddress();
-				pa.ip = endpoint.Address;
+				pa.ip = endpoint.Address.MapToIPv6();
 				pa.port = endpoint.Port;
 				res.peer = pa;
 				return res;

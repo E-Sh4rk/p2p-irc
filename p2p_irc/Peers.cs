@@ -35,9 +35,15 @@ namespace p2p_irc
 		Communications com;
 		Messages messages;
 
-		public Peers(List<PeerAddress> potentialNeighbors, Communications com, TLV_utils tlv_utils, Messages messages)
+		public Peers(PeerAddress[] potentialNeighbors, Communications com, TLV_utils tlv_utils, Messages messages)
 		{
-			this.potentialNeighbors = potentialNeighbors;
+			// To be sure that initial addresses are IPv6
+			for (int i = 0; i < potentialNeighbors.Length; i++)
+			{
+				potentialNeighbors[i].ip = potentialNeighbors[i].ip.MapToIPv6();
+			}
+
+			this.potentialNeighbors = new List<PeerAddress>(potentialNeighbors);
 			this.com = com;
 			this.messages = messages;
 			this.tlv_utils = tlv_utils;

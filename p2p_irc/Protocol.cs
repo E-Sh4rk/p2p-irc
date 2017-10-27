@@ -17,14 +17,14 @@ namespace p2p_irc
 		Peers p;
 		Chat c;
 
-		public Protocol(int? port, Chat.NewMessage new_msg_action)
+		public Protocol(int? port, PeerAddress[] potential_peers, Chat.NewMessage new_msg_action)
 		{
 			r = new Random();
 			ID = (ulong)(r.NextDouble() * ulong.MaxValue);
 			com = new Communications(port);
 			messages = new Messages();
 			tlv_utils = new TLV_utils(ID);
-			p = new Peers(new System.Collections.Generic.List<PeerAddress>(), com, tlv_utils, messages);
+			p = new Peers(potential_peers, com, tlv_utils, messages);
 			c = new Chat(com, tlv_utils, messages, p, new_msg_action);
 		}
 
