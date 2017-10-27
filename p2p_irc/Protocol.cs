@@ -30,8 +30,10 @@ namespace p2p_irc
 
 		public void SendMessage(string msg)
 		{
-			// TODO : Make it thread safe
-			c.SendMessage(msg);
+			lock (this) // Mutual exclusion to be thread safe
+			{
+				c.SendMessage(msg);
+			}
 		}
 
 		Thread thread;
@@ -39,24 +41,26 @@ namespace p2p_irc
 		Stopwatch lastNeighborsSaid;
 		void thread_procedure()
 		{
-			// TODO : Make it thread safe
 			while (true)
 			{
-				// Peers
-				p.RemoveOldNeighbors();
-				if (lastHelloSaid == null || lastHelloSaid.ElapsedMilliseconds >= Peers.helloNeighborsDelay * 1000)
+				lock (this) // Mutual exclusion to be thread safe
 				{
-					p.SayHello();
-					lastHelloSaid = Stopwatch.StartNew();
+					// Peers
+					p.RemoveOldNeighbors();
+					if (lastHelloSaid == null || lastHelloSaid.ElapsedMilliseconds >= Peers.helloNeighborsDelay * 1000)
+					{
+						p.SayHello();
+						lastHelloSaid = Stopwatch.StartNew();
+					}
+					if (lastNeighborsSaid == null || lastNeighborsSaid.ElapsedMilliseconds >= Peers.sendNeighborsDelay * 1000)
+					{
+						p.SendNeighbors();
+						lastNeighborsSaid = Stopwatch.StartNew();
+					}
+					// Flooding
+					c.RemoveOldMessages();
+					c.Flood();
 				}
-				if (lastNeighborsSaid == null || lastNeighborsSaid.ElapsedMilliseconds >= Peers.sendNeighborsDelay * 1000)
-				{
-					p.SendNeighbors();
-					lastNeighborsSaid = Stopwatch.StartNew();
-				}
-				// Flooding
-				c.RemoveOldMessages();
-				c.Flood();
 
 				Thread.Sleep(r.Next(250, 750)); // A little random...
 			}
@@ -69,34 +73,39 @@ namespace p2p_irc
 			thread = new Thread(new ThreadStart(thread_procedure));
 			thread.Start();
 
-			// TODO : Make it thread safe
 			while (true)
 			{
 				Communications.DataReceived? data = com.ReceiveMessage();
-				if (data.HasValue)
+
+				lock (this) // Mutual exclusion to be thread safe
 				{
-					Communications.DataReceived d = data.Value;
-					if (com.IsSelf(d.peer))
-						continue;
-					TLV[] tlvs = messages.UnpackTLVs(d.data);
-					if (tlvs == null)
-						continue;
-					foreach (TLV t in tlvs)
+					if (data.HasValue)
 					{
-						switch (t.type)
+						Communications.DataReceived d = data.Value;
+						if (com.IsSelf(d.peer))
+							continue;
+						TLV[] tlvs = messages.UnpackTLVs(d.data);
+						if (tlvs == null)
+							continue;
+						foreach (TLV t in tlvs)
 						{
-							case TLV.Type.Hello:
-							case TLV.Type.GoAway:
-							case TLV.Type.Neighbour:
-								p.TreatTLV(d.peer, t);
-								break;
-							case TLV.Type.Data:
-							case TLV.Type.Ack:
-								c.TreatTLV(d.peer, t);
-								break;
+							switch (t.type)
+							{
+								case TLV.Type.Hello:
+								case TLV.Type.GoAway:
+								case TLV.Type.Neighbour:
+									p.TreatTLV(d.peer, t);
+									break;
+								case TLV.Type.Data:
+								case TLV.Type.Ack:
+									c.TreatTLV(d.peer, t);
+									break;
+							}
 						}
 					}
 				}
+
+				Thread.Sleep(10);
 			}
 		}
 	}

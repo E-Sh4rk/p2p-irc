@@ -33,8 +33,8 @@ namespace p2p_irc
 		Communications com;
 		Messages messages;
 		Peers peers;
-		Random r;
 
+		Random r;
 		Dictionary<MessageIdentifier, MessageFloodInfo> recent_messages;
 		public delegate void NewMessage(ulong id, string msg);
 		NewMessage new_message_action;
@@ -167,6 +167,7 @@ namespace p2p_irc
 			mid.nonce = tlv_utils.nextDataNonce();
 			MessageFloodInfo mii = InitNewFloodInfo(msg);
 			recent_messages[mid] = mii;
+			new_message_action(mid.sender, msg);
 		}
 	}
 }

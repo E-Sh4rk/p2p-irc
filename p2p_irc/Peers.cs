@@ -28,7 +28,7 @@ namespace p2p_irc
 		public const int helloNeighborsDelay = 30;
 		public const int sendNeighborsDelay = 60;
 
-		Dictionary<PeerAddress, PeerInfo> neighborsTable = new Dictionary<PeerAddress, PeerInfo>();
+		Dictionary<PeerAddress, PeerInfo> neighborsTable;
 		List<PeerAddress> potentialNeighbors;
 
 		TLV_utils tlv_utils;
@@ -41,6 +41,7 @@ namespace p2p_irc
 			this.com = com;
 			this.messages = messages;
 			this.tlv_utils = tlv_utils;
+			neighborsTable = new Dictionary<PeerAddress, PeerInfo>();
 		}
 
 		// TODO : Delete some potential neighbors sometimes?
