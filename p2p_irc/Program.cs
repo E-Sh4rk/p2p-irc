@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading;
 
 namespace p2p_irc
 {
@@ -15,7 +16,12 @@ namespace p2p_irc
 			Console.WriteLine("Please run p2p_ui project if you want to test it.\n");
 			Console.WriteLine("Starting...");
 			Protocol p = new Protocol(null, on_new_message);
-			p.Run();
+			Thread th = new Thread(new ThreadStart(p.Run));
+			th.Start();
+			while (true)
+			{
+				p.SendMessage(Console.ReadLine());
+			}
 		}
 	}
 }

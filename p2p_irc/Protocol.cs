@@ -100,6 +100,11 @@ namespace p2p_irc
 								case TLV.Type.Ack:
 									c.TreatTLV(d.peer, t);
 									break;
+								case TLV.Type.Warning:
+									string msg = tlv_utils.getWarningMessage(t);
+									if (!String.IsNullOrEmpty(msg))
+										Console.WriteLine("[WARNING] " + msg);
+									break;
 							}
 						}
 					}
