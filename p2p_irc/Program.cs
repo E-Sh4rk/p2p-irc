@@ -15,13 +15,17 @@ namespace p2p_irc
 		{
 			Console.WriteLine("This project is only used for debugging.");
 			Console.WriteLine("Please use p2p_ui project if you want to have an UI interface.\n");
-			Console.WriteLine("Starting the chat...");
 
 			PeerAddress pa = new PeerAddress();
 			pa.port = 1212;
 			pa.ip = Dns.GetHostEntry("jch.irif.fr").AddressList[0];
-			Protocol p = new Protocol(null, new PeerAddress[] { pa }, on_new_message);
+			Console.WriteLine("Port number to use (empty for no bind) :");
+			string port_str = Console.ReadLine();
+			int? port = null;
+			try { port = Convert.ToUInt16(port_str); } catch { }
+			Protocol p = new Protocol(port, new PeerAddress[] { pa }, on_new_message);
 
+			Console.WriteLine("Starting the chat...");
 			Thread th = new Thread(new ThreadStart(p.Run));
 			th.Start();
 			while (true)
