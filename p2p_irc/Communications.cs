@@ -15,12 +15,19 @@ namespace p2p_irc
 		UdpClient socket;
 		public Communications(int? port)
 		{
-			if (port.HasValue)
-				socket = new UdpClient(port.Value, AddressFamily.InterNetworkV6); // Create a new socket and bind it to the port
-			else
-				socket = new UdpClient(AddressFamily.InterNetworkV6); // Create a new socket without binding it
 			// For .NET framework < 4.5 : https://blogs.msdn.microsoft.com/webdev/2013/01/08/dual-mode-sockets-never-create-an-ipv4-socket-again/
-			socket.Client.DualMode = true;
+			if (port.HasValue)
+			{
+				// Create a new socket and bind it to the port
+				socket = new UdpClient(/*port.Value, */AddressFamily.InterNetworkV6);
+				socket.Client.Bind(new IPEndPoint(IPAddress.IPv6Any, port.Value));
+				// socket.Client.DualMode = true; // TODO: Fail... Why?
+			}
+			else
+			{
+				socket = new UdpClient(AddressFamily.InterNetworkV6); // Create a new socket without binding it
+				socket.Client.DualMode = true;
+			}
 		}
 		public void SendMessage(PeerAddress pa, byte[] msg)
 		{
@@ -36,7 +43,7 @@ namespace p2p_irc
 			try
 			{
 				DataReceived res = new DataReceived();
-				IPEndPoint endpoint = new IPEndPoint(IPAddress.Any, 0);
+				IPEndPoint endpoint = new IPEndPoint(IPAddress.IPv6Any, 0);
 				res.data = socket.Receive(ref endpoint);
 				PeerAddress pa = new PeerAddress();
 				pa.ip = endpoint.Address.MapToIPv6();
