@@ -12,9 +12,9 @@ namespace p2p_irc
 
 		public static void Main(string[] args)
 		{
-			Console.WriteLine("This project only implements the protocol (no UI).");
-			Console.WriteLine("Please run p2p_ui project if you want to test it.\n");
-			Console.WriteLine("Starting...");
+			Console.WriteLine("This project is only used for debugging.");
+			Console.WriteLine("Please use p2p_ui project if you want to have an UI interface.\n");
+			Console.WriteLine("Starting the chat...");
 			Protocol p = new Protocol(null, on_new_message);
 			Thread th = new Thread(new ThreadStart(p.Run));
 			th.Start();
