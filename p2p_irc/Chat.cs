@@ -28,6 +28,7 @@ namespace p2p_irc
 	public class Chat
 	{
 		public const int recentMessageDelay = 60 * 5; // Durée max pendant laquelle on continue à innonder
+		public const int max_flood_tries_number = 5;
 
 		TLV_utils tlv_utils;
 		Communications com;
@@ -151,9 +152,17 @@ namespace p2p_irc
 						if (nfi.lastAttempt.ElapsedMilliseconds >= nfi.nextAttemptMillisecond)
 						{
 							nfi.numberAttempts++;
-							nfi.lastAttempt = Stopwatch.StartNew();
-							nfi.nextAttemptMillisecond = ComputeNextFloodAttempt(nfi.numberAttempts);
-							com.SendMessage(pa, messages.PackTLV(tlv_utils.data(m.sender, m.nonce, recent_messages[m].msg)));
+							if (nfi.numberAttempts >= max_flood_tries_number)
+							{
+								recent_messages[m].neighbors.Remove(pa);
+								peers.Goodbye(pa);
+							}
+							else
+							{
+								nfi.lastAttempt = Stopwatch.StartNew();
+								nfi.nextAttemptMillisecond = ComputeNextFloodAttempt(nfi.numberAttempts);
+								com.SendMessage(pa, messages.PackTLV(tlv_utils.data(m.sender, m.nonce, recent_messages[m].msg)));
+							}
 						}
 					}
 				}

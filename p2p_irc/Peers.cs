@@ -124,6 +124,12 @@ namespace p2p_irc
 			return sn.ToArray();
 		}
 
+		public void Goodbye(PeerAddress n)
+		{
+			com.SendMessage(n, messages.PackTLV(tlv_utils.goAway(2, "")));
+			neighborsTable.Remove(n);
+		}
+
 		bool IsRecentNeighbor(PeerAddress a)
 		{
 			try
@@ -141,10 +147,7 @@ namespace p2p_irc
 			foreach (PeerAddress n in ns)
 			{
 				if (!IsRecentNeighbor(n))
-				{
-					com.SendMessage(n,messages.PackTLV(tlv_utils.goAway(2, "")));
-					neighborsTable.Remove(n);
-				}
+					Goodbye(n);
 			}
 		}
 
