@@ -40,7 +40,7 @@ namespace p2p_irc
 				Array.Copy(buffer, offset, body, 0, length);
 				offset += length;
 
-				if (!Enum.IsDefined(typeof(TLV.Type), type))
+				if (!Enum.IsDefined(typeof(TLV.Type), (int)type))
 					return null;
 				TLV t = new TLV();
 				t.type = (TLV.Type)type;
