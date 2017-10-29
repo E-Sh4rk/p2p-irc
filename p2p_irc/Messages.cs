@@ -15,7 +15,7 @@ namespace p2p_irc
 			public byte magic;
 			public byte version;
 			public ushort body_length;
-			public int body_offset; // Not in the header of the message, but useful
+			public const int body_offset = 4; // Not in the header of the message, but useful
 		}
 
 		public Messages()
@@ -28,8 +28,7 @@ namespace p2p_irc
 			MessageHeader h = new MessageHeader();
 			h.magic = buffer[0];
 			h.version = buffer[1];
-			h.body_length = BitConverter.ToUInt16(buffer, 2); // Endianness ?? For now we don't care.
-			h.body_offset = 4;
+			h.body_length = Utils.ToUInt16(buffer, 2);
 			return h;
 		}
 
@@ -44,7 +43,7 @@ namespace p2p_irc
 				if (h.version != version)
 					return null;
 				byte[] body = new byte[h.body_length];
-				Array.Copy(buffer, h.body_offset, body, 0, h.body_length);
+				Array.Copy(buffer, MessageHeader.body_offset, body, 0, h.body_length);
 				return body;
 			}
 			catch (IndexOutOfRangeException e)
@@ -63,11 +62,10 @@ namespace p2p_irc
 
 		byte[] WriteHeader(MessageHeader h)
 		{
-			h.body_offset = 4;
-			byte[] res = new byte[h.body_offset + h.body_length];
+			byte[] res = new byte[MessageHeader.body_offset + h.body_length];
 			res[0] = magic;
 			res[1] = version;
-			byte[] length_b = BitConverter.GetBytes(h.body_length);
+			byte[] length_b = Utils.GetBytes(h.body_length);
 			if (length_b.Length != 2)
 				Debug.Assert(false);
 			Array.Copy(length_b, 0, res, 2, length_b.Length);
@@ -83,7 +81,7 @@ namespace p2p_irc
 				h.version = version;
 				h.body_length = (ushort)body.Length;
 				byte[] res = WriteHeader(h);
-				Array.Copy(body, 0, res, h.body_offset, h.body_length);
+				Array.Copy(body, 0, res, MessageHeader.body_offset, h.body_length);
 				return res;
 			}
 			catch { Console.WriteLine("[ERROR] Error while packing body !"); }

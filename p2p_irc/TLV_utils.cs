@@ -21,7 +21,7 @@ namespace p2p_irc
 		{
 			TLV t = new TLV();
 			t.type = TLV.Type.Hello;
-			t.body = BitConverter.GetBytes(ID);
+			t.body = Utils.GetBytes(ID);
 			Debug.Assert(t.body.Length == 8);
 			return t;
 		}
@@ -29,8 +29,8 @@ namespace p2p_irc
 		{
 			TLV t = new TLV();
 			t.type = TLV.Type.Hello;
-			byte[] src = BitConverter.GetBytes(ID);
-			byte[] dest = BitConverter.GetBytes(destID);
+			byte[] src = Utils.GetBytes(ID);
+			byte[] dest = Utils.GetBytes(destID);
 			t.body = new byte[src.Length + dest.Length];
 			Array.Copy(src, t.body, src.Length);
 			Array.Copy(dest, 0, t.body, src.Length, dest.Length);
@@ -45,7 +45,7 @@ namespace p2p_irc
 					return null;
 				if (tlv.body.Length != 8 && tlv.body.Length != 16)
 					return null;
-				return BitConverter.ToUInt64(tlv.body, 0);
+				return Utils.ToUInt64(tlv.body, 0);
 			}
 			catch { return null; }
 		}
@@ -57,7 +57,7 @@ namespace p2p_irc
 					return false;
 				if (tlv.body.Length != 16)
 					return false;
-				return BitConverter.ToUInt64(tlv.body, 8) == ID;
+				return Utils.ToUInt64(tlv.body, 8) == ID;
 			}
 			catch { return false; }
 		}
@@ -98,7 +98,7 @@ namespace p2p_irc
 			byte[] ip = pa.ip.MapToIPv6().GetAddressBytes();
 			t.body = new byte[ip.Length + 4];
 			Array.Copy(ip, t.body, ip.Length);
-			Array.Copy(BitConverter.GetBytes(pa.port), 0, t.body, t.body.Length-4, 4);
+			Array.Copy(Utils.GetBytes(pa.port), 0, t.body, t.body.Length-4, 4);
 			Debug.Assert(t.body.Length == 20);
 			return t;
 		}
@@ -112,7 +112,7 @@ namespace p2p_irc
 				byte[] byte_addr = new byte[tlv.body.Length - 4];
 				Array.Copy(tlv.body, byte_addr, byte_addr.Length);
 				pa.ip = new IPAddress(byte_addr).MapToIPv6();
-				pa.port = BitConverter.ToInt32(tlv.body, tlv.body.Length - 4);
+				pa.port = Utils.ToInt32(tlv.body, tlv.body.Length - 4);
 				return pa;
 			}
 			catch { return null; }
@@ -137,8 +137,8 @@ namespace p2p_irc
 		public TLV data(ulong sender, uint nonce, string message)
 		{
 			byte[] msg_b = Encoding.UTF8.GetBytes(message);
-			byte[] ID_b = BitConverter.GetBytes(sender);
-			byte[] nonce_b = BitConverter.GetBytes(nonce);
+			byte[] ID_b = Utils.GetBytes(sender);
+			byte[] nonce_b = Utils.GetBytes(nonce);
 			TLV tlv = new TLV();
 			tlv.type = TLV.Type.Data;
 			tlv.body = new byte[msg_b.Length + ID_b.Length + nonce_b.Length];
@@ -155,8 +155,8 @@ namespace p2p_irc
 				if (tlv.type != TLV.Type.Data)
 					return null;
 				DataMessage dm = new DataMessage();
-				dm.sender = BitConverter.ToUInt64(tlv.body, 0);
-				dm.nonce = BitConverter.ToUInt32(tlv.body, 8);
+				dm.sender = Utils.ToUInt64(tlv.body, 0);
+				dm.nonce = Utils.ToUInt32(tlv.body, 8);
 				dm.msg = Encoding.UTF8.GetString(tlv.body, 12, tlv.body.Length - 12);
 				return dm;
 			}
@@ -166,8 +166,8 @@ namespace p2p_irc
 		// ----- ACK -----
 		public TLV ack(ulong sender, uint nonce)
 		{
-			byte[] ID_b = BitConverter.GetBytes(sender);
-			byte[] nonce_b = BitConverter.GetBytes(nonce);
+			byte[] ID_b = Utils.GetBytes(sender);
+			byte[] nonce_b = Utils.GetBytes(nonce);
 			TLV tlv = new TLV();
 			tlv.type = TLV.Type.Ack;
 			tlv.body = new byte[ID_b.Length + nonce_b.Length];
@@ -185,8 +185,8 @@ namespace p2p_irc
 				if (tlv.body.Length != 12)
 					return null;
 				DataMessage dm = new DataMessage();
-				dm.sender = BitConverter.ToUInt64(tlv.body, 0);
-				dm.nonce = BitConverter.ToUInt32(tlv.body, 8);
+				dm.sender = Utils.ToUInt64(tlv.body, 0);
+				dm.nonce = Utils.ToUInt32(tlv.body, 8);
 				dm.msg = null;
 				return dm;
 			}
