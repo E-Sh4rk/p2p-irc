@@ -33,9 +33,9 @@
             this.portNumber = new System.Windows.Forms.NumericUpDown();
             this.label1 = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
-            this.textBox1 = new System.Windows.Forms.TextBox();
+            this.username = new System.Windows.Forms.TextBox();
             this.label3 = new System.Windows.Forms.Label();
-            this.textBox2 = new System.Windows.Forms.TextBox();
+            this.neighbors = new System.Windows.Forms.TextBox();
             ((System.ComponentModel.ISupportInitialize)(this.portNumber)).BeginInit();
             this.SuspendLayout();
             // 
@@ -57,6 +57,7 @@
             this.button2.TabIndex = 1;
             this.button2.Text = "Restart connections";
             this.button2.UseVisualStyleBackColor = true;
+            this.button2.Click += new System.EventHandler(this.button2_Click);
             // 
             // portNumber
             // 
@@ -98,13 +99,13 @@
             this.label2.TabIndex = 4;
             this.label2.Text = "Username";
             // 
-            // textBox1
+            // username
             // 
-            this.textBox1.Location = new System.Drawing.Point(150, 12);
-            this.textBox1.Name = "textBox1";
-            this.textBox1.Size = new System.Drawing.Size(120, 20);
-            this.textBox1.TabIndex = 5;
-            this.textBox1.Text = "Kadoc";
+            this.username.Location = new System.Drawing.Point(150, 12);
+            this.username.Name = "username";
+            this.username.Size = new System.Drawing.Size(120, 20);
+            this.username.TabIndex = 5;
+            this.username.Text = "Kadoc";
             // 
             // label3
             // 
@@ -115,14 +116,14 @@
             this.label3.TabIndex = 6;
             this.label3.Text = "Initial potential neighbors list (one per line, need restart)";
             // 
-            // textBox2
+            // neighbors
             // 
-            this.textBox2.Location = new System.Drawing.Point(12, 87);
-            this.textBox2.Multiline = true;
-            this.textBox2.Name = "textBox2";
-            this.textBox2.Size = new System.Drawing.Size(258, 84);
-            this.textBox2.TabIndex = 7;
-            this.textBox2.Text = "jch.irif.fr:1212";
+            this.neighbors.Location = new System.Drawing.Point(12, 87);
+            this.neighbors.Multiline = true;
+            this.neighbors.Name = "neighbors";
+            this.neighbors.Size = new System.Drawing.Size(258, 84);
+            this.neighbors.TabIndex = 7;
+            this.neighbors.Text = "jch.irif.fr:1212";
             // 
             // Settings
             // 
@@ -130,9 +131,9 @@
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(282, 212);
-            this.Controls.Add(this.textBox2);
+            this.Controls.Add(this.neighbors);
             this.Controls.Add(this.label3);
-            this.Controls.Add(this.textBox1);
+            this.Controls.Add(this.username);
             this.Controls.Add(this.label2);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.portNumber);
@@ -155,8 +156,8 @@
         private System.Windows.Forms.NumericUpDown portNumber;
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.Label label2;
-        private System.Windows.Forms.TextBox textBox1;
+        private System.Windows.Forms.TextBox username;
         private System.Windows.Forms.Label label3;
-        private System.Windows.Forms.TextBox textBox2;
+        private System.Windows.Forms.TextBox neighbors;
     }
 }

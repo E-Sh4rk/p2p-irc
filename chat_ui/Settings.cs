@@ -16,9 +16,43 @@ namespace chat_ui
             InitializeComponent();
         }
 
-        private void close_Click(object sender, EventArgs e)
+        bool restartCommunications = true;
+        public bool RestartCommunications
         {
-            this.Close();
+            get
+            {
+                bool r = restartCommunications;
+                restartCommunications = false;
+                return r;
+            }
+        }
+        public int Port
+        {
+            get
+            {
+                return Convert.ToInt32(portNumber.Value);
+            }
+        }
+        public string Username
+        {
+            get
+            {
+                return username.Text;
+            }
+        }
+        public string[] Neighbors
+        {
+            get
+            {
+                return neighbors.Text.Split(new string[] { "\r\n", Environment.NewLine, "\n" }, StringSplitOptions.RemoveEmptyEntries);
+            }
+        }
+
+        private void close_Click(object sender, EventArgs e) {  this.Close(); }
+
+        private void button2_Click(object sender, EventArgs e)
+        {
+            restartCommunications = true;
         }
     }
 }

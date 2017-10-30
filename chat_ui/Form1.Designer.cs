@@ -39,10 +39,10 @@
             this.chatTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.chatTextBox.Enabled = false;
             this.chatTextBox.Location = new System.Drawing.Point(13, 13);
             this.chatTextBox.Multiline = true;
             this.chatTextBox.Name = "chatTextBox";
+            this.chatTextBox.ReadOnly = true;
             this.chatTextBox.Size = new System.Drawing.Size(424, 251);
             this.chatTextBox.TabIndex = 0;
             // 
@@ -64,6 +64,7 @@
             this.sendButton.TabIndex = 2;
             this.sendButton.Text = "Send";
             this.sendButton.UseVisualStyleBackColor = true;
+            this.sendButton.Click += new System.EventHandler(this.sendButton_Click);
             // 
             // settingsButton
             // 

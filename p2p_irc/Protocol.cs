@@ -17,6 +17,8 @@ namespace p2p_irc
 		Peers p;
 		Chat c;
 
+        // TODO : Quit (send go away, etc)
+
 		public Protocol(int? port, PeerAddress[] potential_peers, Chat.NewMessage new_msg_action)
 		{
 			r = new Random();
