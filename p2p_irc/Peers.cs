@@ -190,5 +190,14 @@ namespace p2p_irc
 				com.SendMessage(p, msg);
 			}
 		}
+
+        public void GoodByeEveryone()
+        {
+            PeerAddress[] neighbors = GetNeighbors();
+            foreach (PeerAddress p in neighbors)
+            {
+                Goodbye(p);
+            }
+        }
 	}
 }

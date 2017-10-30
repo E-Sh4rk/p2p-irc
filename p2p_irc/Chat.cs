@@ -51,6 +51,11 @@ namespace p2p_irc
 			recent_messages = new Dictionary<MessageIdentifier, MessageFloodInfo>();
 		}
 
+        public void DeleteAll()
+        {
+            recent_messages.Clear();
+        }
+
 		int ComputeNextFloodAttempt(int numberAttempts)
 		{
 			int res = (int)(Math.Pow(2.0, numberAttempts - 1)*1000.0);

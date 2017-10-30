@@ -33,7 +33,12 @@ namespace chat_ui
         Thread t;
         public void restartCommunications()
         {
-            // TODO : Quit protocol before making a new one
+            if (protocol != null)
+            {
+                protocol.Dispose();
+                while (t.IsAlive) { Thread.Sleep(10); }
+            }
+
             List<p2p_irc.PeerAddress> neighbors = new List<p2p_irc.PeerAddress>();
             foreach (string a in settings.Neighbors)
             {
@@ -74,6 +79,12 @@ namespace chat_ui
         {
             protocol.SendMessage(settings.Username + ": " + messageTextBox.Text);
             messageTextBox.Text = "";
+        }
+
+        private void Form1_FormClosed(object sender, FormClosedEventArgs e)
+        {
+            if (protocol != null)
+                protocol.Dispose();
         }
     }
 }

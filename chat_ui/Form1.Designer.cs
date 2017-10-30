@@ -91,6 +91,7 @@
             this.Controls.Add(this.chatTextBox);
             this.Name = "Form1";
             this.Text = "P2P Chat";
+            this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.Form1_FormClosed);
             this.ResumeLayout(false);
             this.PerformLayout();
 

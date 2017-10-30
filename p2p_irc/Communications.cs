@@ -21,7 +21,15 @@ namespace p2p_irc
             socket.DualMode = true;
             if (port.HasValue)
                 socket.Bind(new IPEndPoint(IPAddress.IPv6Any, port.Value));
+            socket.ReceiveTimeout = 100;
+            socket.SendTimeout = 100; // Should not be used in UDP... but anyway.
 		}
+
+        public void Close()
+        {
+            socket.Close();
+            socket = null;
+        }
 		public void SendMessage(PeerAddress pa, byte[] msg)
 		{
 			try
@@ -33,8 +41,8 @@ namespace p2p_irc
 		}
 		public DataReceived ReceiveMessage()
 		{
-			try
-			{
+            try
+            {
                 EndPoint endpoint = new IPEndPoint(IPAddress.IPv6Any, 0);
                 byte[] buffer = new byte[MaxUDPSize];
                 int read = socket.ReceiveFrom(buffer, MaxUDPSize, SocketFlags.None, ref endpoint);
@@ -48,8 +56,9 @@ namespace p2p_irc
                 Array.Copy(buffer, res.data, read);
 
                 return res;
-			}
-			catch { Console.WriteLine("[ERROR] Error while receiving datagram."); }
+            }
+            catch (SocketException) { } // Timeout
+            catch { Console.WriteLine("[ERROR] Error while receiving datagram."); }
 			return null;
 		}
 		public bool IsSelf(PeerAddress pa)
