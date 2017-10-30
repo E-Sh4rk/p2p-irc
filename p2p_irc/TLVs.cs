@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace p2p_irc
 {
-	public struct TLV
+	public class TLV
 	{
 		public enum Type
 		{
@@ -24,7 +24,7 @@ namespace p2p_irc
 		public TLVs() { }
 
 		// Read the TLV at the given position, and update the pointer offset. Return null if it is a Pad or an incorrect/unknown TLV.
-		public TLV? Read(byte[] buffer, ref int offset)
+		public TLV Read(byte[] buffer, ref int offset)
 		{
 			if (buffer == null)
 				return null;
@@ -66,9 +66,9 @@ namespace p2p_irc
 			int offset = 0;
 			while (offset < buffer.Length)
 			{
-				TLV? tlv = Read(buffer, ref offset);
-				if (tlv.HasValue)
-					tlvs.Add(tlv.Value);
+				TLV tlv = Read(buffer, ref offset);
+				if (tlv != null)
+					tlvs.Add(tlv);
 			}
 			return tlvs.ToArray();
 		}

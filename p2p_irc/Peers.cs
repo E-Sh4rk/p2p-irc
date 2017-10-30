@@ -12,7 +12,7 @@ namespace p2p_irc
 		public int port;
 	}
 
-	public struct PeerInfo
+	public class PeerInfo
 	{
 		public ulong ID;
 		public Stopwatch lastHello;
@@ -72,8 +72,12 @@ namespace p2p_irc
 							}
 							pi.ID = src_ID.Value;
 							pi.lastHello = Stopwatch.StartNew();
-							if (tlv_utils.isValidLongHello(tlv))
-								pi.lastHelloLong = Stopwatch.StartNew();
+                            if (tlv_utils.isValidLongHello(tlv))
+                            {
+                                if (pi.lastHelloLong == null) // Dans le cas d'un premier hello long, on réplique tout de suite pr accélérer un peu les choses
+                                    com.SendMessage(a, messages.PackTLV(tlv_utils.longHello(pi.ID)));
+                                pi.lastHelloLong = Stopwatch.StartNew();
+                            }
 							neighborsTable[a] = pi;
 						}
 						break;

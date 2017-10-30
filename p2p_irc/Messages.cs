@@ -10,7 +10,7 @@ namespace p2p_irc
 
 		TLVs tlv_reader;
 
-		struct MessageHeader
+		class MessageHeader
 		{
 			public byte magic;
 			public byte version;

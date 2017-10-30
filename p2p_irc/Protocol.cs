@@ -75,13 +75,13 @@ namespace p2p_irc
 
 			while (true)
 			{
-				Communications.DataReceived? data = com.ReceiveMessage();
+				Communications.DataReceived data = com.ReceiveMessage();
 
 				lock (this) // Mutual exclusion to be thread safe
 				{
-					if (data.HasValue)
+					if (data != null)
 					{
-						Communications.DataReceived d = data.Value;
+						Communications.DataReceived d = data;
 						if (com.IsSelf(d.peer))
 							continue;
 						TLV[] tlvs = messages.UnpackTLVs(d.data);

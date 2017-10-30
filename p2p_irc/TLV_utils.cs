@@ -119,7 +119,7 @@ namespace p2p_irc
 		}
 
 		// ----- DATA -----
-		public struct DataMessage
+		public class DataMessage
 		{
 			public ulong sender;
 			public uint nonce;
@@ -148,7 +148,7 @@ namespace p2p_irc
 			Debug.Assert(tlv.body.Length == msg_b.Length + 12);
 			return tlv;
 		}
-		public DataMessage? getDataMessage(TLV tlv)
+		public DataMessage getDataMessage(TLV tlv)
 		{
 			try
 			{
@@ -176,7 +176,7 @@ namespace p2p_irc
 			Debug.Assert(tlv.body.Length == 12);
 			return tlv;
 		}
-		public DataMessage? getAckMessage(TLV tlv)
+		public DataMessage getAckMessage(TLV tlv)
 		{
 			try
 			{

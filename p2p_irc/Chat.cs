@@ -11,14 +11,14 @@ namespace p2p_irc
 		public uint nonce;
 	}
 
-	public struct NeighborFloodInfo
+	public class NeighborFloodInfo
 	{
 		public Stopwatch lastAttempt;
 		public int nextAttemptMillisecond;
 		public int numberAttempts;
 	}
 
-	public struct MessageFloodInfo
+	public class MessageFloodInfo
 	{
 		public Stopwatch timeElapsed;
 		public string msg;
@@ -78,23 +78,23 @@ namespace p2p_irc
 		{
 			try
 			{
-				TLV_utils.DataMessage? dm;
+				TLV_utils.DataMessage dm;
 				switch (tlv.type)
 				{
 					case TLV.Type.Data:
 						dm = tlv_utils.getDataMessage(tlv);
-						if (dm.HasValue && peers.IsSymetricNeighbor(a))
+						if (dm != null && peers.IsSymetricNeighbor(a))
 						{
 							MessageIdentifier mid = new MessageIdentifier();
-							mid.nonce = dm.Value.nonce;
-							mid.sender = dm.Value.sender;
+							mid.nonce = dm.nonce;
+							mid.sender = dm.sender;
 
 							// Adding message to the flooding list...
 							if (!recent_messages.ContainsKey(mid))
 							{
-								MessageFloodInfo mii = InitNewFloodInfo(dm.Value.msg);
+								MessageFloodInfo mii = InitNewFloodInfo(dm.msg);
 								recent_messages[mid] = mii;
-								new_message_action(mid.sender, dm.Value.msg);
+								new_message_action(mid.sender, dm.msg);
 							}
 							// Ack & Remove from flooding list
 							com.SendMessage(a, messages.PackTLV(tlv_utils.ack(mid.sender, mid.nonce)));
@@ -103,11 +103,11 @@ namespace p2p_irc
 						break;
 					case TLV.Type.Ack:
 						dm = tlv_utils.getAckMessage(tlv);
-						if (dm.HasValue && peers.IsSymetricNeighbor(a))
+						if (dm != null && peers.IsSymetricNeighbor(a))
 						{
 							MessageIdentifier mid = new MessageIdentifier();
-							mid.nonce = dm.Value.nonce;
-							mid.sender = dm.Value.sender;
+							mid.nonce = dm.nonce;
+							mid.sender = dm.sender;
 							try { recent_messages[mid].neighbors.Remove(a); } catch { }
 						}
 						break;
@@ -152,18 +152,15 @@ namespace p2p_irc
 						if (nfi.lastAttempt.ElapsedMilliseconds >= nfi.nextAttemptMillisecond)
 						{
 							nfi.numberAttempts++;
-							if (nfi.numberAttempts >= max_flood_tries_number)
-							{
-								recent_messages[m].neighbors.Remove(pa);
-								peers.Goodbye(pa);
-							}
-							else
-							{
-								nfi.lastAttempt = Stopwatch.StartNew();
-								nfi.nextAttemptMillisecond = ComputeNextFloodAttempt(nfi.numberAttempts);
-								com.SendMessage(pa, messages.PackTLV(tlv_utils.data(m.sender, m.nonce, recent_messages[m].msg)));
-							}
-						}
+							nfi.lastAttempt = Stopwatch.StartNew();
+							nfi.nextAttemptMillisecond = ComputeNextFloodAttempt(nfi.numberAttempts);
+							com.SendMessage(pa, messages.PackTLV(tlv_utils.data(m.sender, m.nonce, recent_messages[m].msg)));
+                            if (nfi.numberAttempts >= max_flood_tries_number)
+                            {
+                                recent_messages[m].neighbors.Remove(pa);
+                                peers.Goodbye(pa);
+                            }
+                        }
 					}
 				}
 			}

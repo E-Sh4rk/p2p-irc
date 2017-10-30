@@ -6,7 +6,7 @@ namespace p2p_irc
 {
 	public class Communications
 	{
-		public struct DataReceived
+		public class DataReceived
 		{
 			public PeerAddress peer;
 			public byte[] data;
@@ -31,7 +31,7 @@ namespace p2p_irc
             }
 			catch { Console.WriteLine("[ERROR] Error while sending datagram."); }
 		}
-		public DataReceived? ReceiveMessage()
+		public DataReceived ReceiveMessage()
 		{
 			try
 			{
