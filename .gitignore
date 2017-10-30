@@ -70,3 +70,11 @@ p2p_irc/[Rr]elease*/
 p2p_irc/[Bb]uild/
 p2p_irc/_ReSharper*/
 p2p_irc/Tt]est[Rr]esult*
+chat_ui/ipch/
+chat_ui/obj/
+chat_ui/[Bb]in
+chat_ui/[Dd]ebug*/
+chat_ui/[Rr]elease*/
+chat_ui/[Bb]uild/
+chat_ui/_ReSharper*/
+chat_ui/Tt]est[Rr]esult*
