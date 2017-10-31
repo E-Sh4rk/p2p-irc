@@ -36,12 +36,14 @@
             this.username = new System.Windows.Forms.TextBox();
             this.label3 = new System.Windows.Forms.Label();
             this.neighbors = new System.Windows.Forms.TextBox();
+            this.showIDs = new System.Windows.Forms.CheckBox();
+            this.label4 = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.portNumber)).BeginInit();
             this.SuspendLayout();
             // 
             // close
             // 
-            this.close.Location = new System.Drawing.Point(195, 177);
+            this.close.Location = new System.Drawing.Point(195, 209);
             this.close.Name = "close";
             this.close.Size = new System.Drawing.Size(75, 23);
             this.close.TabIndex = 0;
@@ -51,7 +53,7 @@
             // 
             // button2
             // 
-            this.button2.Location = new System.Drawing.Point(76, 177);
+            this.button2.Location = new System.Drawing.Point(76, 209);
             this.button2.Name = "button2";
             this.button2.Size = new System.Drawing.Size(113, 23);
             this.button2.TabIndex = 1;
@@ -61,7 +63,7 @@
             // 
             // portNumber
             // 
-            this.portNumber.Location = new System.Drawing.Point(150, 38);
+            this.portNumber.Location = new System.Drawing.Point(150, 70);
             this.portNumber.Maximum = new decimal(new int[] {
             65535,
             0,
@@ -84,7 +86,7 @@
             // label1
             // 
             this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(15, 40);
+            this.label1.Location = new System.Drawing.Point(15, 72);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(129, 13);
             this.label1.TabIndex = 3;
@@ -110,27 +112,48 @@
             // label3
             // 
             this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(9, 71);
+            this.label3.Location = new System.Drawing.Point(15, 103);
             this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(264, 13);
+            this.label3.Size = new System.Drawing.Size(249, 13);
             this.label3.TabIndex = 6;
-            this.label3.Text = "Initial potential neighbors list (one per line, need restart)";
+            this.label3.Text = "Initial potential neighbors (one per line, need restart)";
             // 
             // neighbors
             // 
-            this.neighbors.Location = new System.Drawing.Point(12, 87);
+            this.neighbors.Location = new System.Drawing.Point(12, 119);
             this.neighbors.Multiline = true;
             this.neighbors.Name = "neighbors";
             this.neighbors.Size = new System.Drawing.Size(258, 84);
             this.neighbors.TabIndex = 7;
             this.neighbors.Text = "jch.irif.fr:1212";
             // 
+            // showIDs
+            // 
+            this.showIDs.AutoSize = true;
+            this.showIDs.Location = new System.Drawing.Point(150, 38);
+            this.showIDs.Name = "showIDs";
+            this.showIDs.Size = new System.Drawing.Size(72, 17);
+            this.showIDs.TabIndex = 8;
+            this.showIDs.Text = "Show IDs";
+            this.showIDs.UseVisualStyleBackColor = true;
+            // 
+            // label4
+            // 
+            this.label4.AutoSize = true;
+            this.label4.Location = new System.Drawing.Point(15, 39);
+            this.label4.Name = "label4";
+            this.label4.Size = new System.Drawing.Size(41, 13);
+            this.label4.TabIndex = 9;
+            this.label4.Text = "Display";
+            // 
             // Settings
             // 
             this.AcceptButton = this.close;
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(282, 212);
+            this.ClientSize = new System.Drawing.Size(282, 243);
+            this.Controls.Add(this.label4);
+            this.Controls.Add(this.showIDs);
             this.Controls.Add(this.neighbors);
             this.Controls.Add(this.label3);
             this.Controls.Add(this.username);
@@ -159,5 +182,7 @@
         private System.Windows.Forms.TextBox username;
         private System.Windows.Forms.Label label3;
         private System.Windows.Forms.TextBox neighbors;
+        private System.Windows.Forms.CheckBox showIDs;
+        private System.Windows.Forms.Label label4;
     }
 }

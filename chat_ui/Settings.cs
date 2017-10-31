@@ -40,6 +40,13 @@ namespace chat_ui
                 return username.Text;
             }
         }
+        public bool ShowIDs
+        {
+            get
+            {
+                return showIDs.Checked;
+            }
+        }
         public string[] Neighbors
         {
             get

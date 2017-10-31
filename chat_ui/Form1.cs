@@ -66,6 +66,8 @@ namespace chat_ui
                 this.Invoke((MethodInvoker) delegate { newMessageArrived(sender, msg); });
             else
             {
+                if (settings.ShowIDs)
+                    chatTextBox.Text += "[" + sender.ToString() + "] ";
                 chatTextBox.Text += msg + Environment.NewLine;
             }
         }
