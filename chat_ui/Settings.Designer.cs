@@ -29,7 +29,7 @@
         private void InitializeComponent()
         {
             this.close = new System.Windows.Forms.Button();
-            this.button2 = new System.Windows.Forms.Button();
+            this.restartConnections = new System.Windows.Forms.Button();
             this.portNumber = new System.Windows.Forms.NumericUpDown();
             this.label1 = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
@@ -51,15 +51,15 @@
             this.close.UseVisualStyleBackColor = true;
             this.close.Click += new System.EventHandler(this.close_Click);
             // 
-            // button2
+            // restartConnections
             // 
-            this.button2.Location = new System.Drawing.Point(76, 209);
-            this.button2.Name = "button2";
-            this.button2.Size = new System.Drawing.Size(113, 23);
-            this.button2.TabIndex = 1;
-            this.button2.Text = "Restart connections";
-            this.button2.UseVisualStyleBackColor = true;
-            this.button2.Click += new System.EventHandler(this.button2_Click);
+            this.restartConnections.Location = new System.Drawing.Point(76, 209);
+            this.restartConnections.Name = "restartConnections";
+            this.restartConnections.Size = new System.Drawing.Size(113, 23);
+            this.restartConnections.TabIndex = 1;
+            this.restartConnections.Text = "Restart connections";
+            this.restartConnections.UseVisualStyleBackColor = true;
+            this.restartConnections.Click += new System.EventHandler(this.button2_Click);
             // 
             // portNumber
             // 
@@ -148,7 +148,6 @@
             // 
             // Settings
             // 
-            this.AcceptButton = this.close;
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(282, 243);
@@ -160,7 +159,7 @@
             this.Controls.Add(this.label2);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.portNumber);
-            this.Controls.Add(this.button2);
+            this.Controls.Add(this.restartConnections);
             this.Controls.Add(this.close);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
             this.MaximizeBox = false;
@@ -175,7 +174,7 @@
         #endregion
 
         private System.Windows.Forms.Button close;
-        private System.Windows.Forms.Button button2;
+        private System.Windows.Forms.Button restartConnections;
         private System.Windows.Forms.NumericUpDown portNumber;
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.Label label2;

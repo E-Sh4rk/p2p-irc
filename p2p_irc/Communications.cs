@@ -23,6 +23,7 @@ namespace p2p_irc
                 socket.Bind(new IPEndPoint(IPAddress.IPv6Any, port.Value));
             socket.ReceiveTimeout = 100;
             socket.SendTimeout = 100; // Should not be used in UDP... but anyway.
+            socket.Blocking = false; // If a packet can't be send immedialty, we prefer to drop it rather than blocking the thread...
 		}
 
         public void Close()
