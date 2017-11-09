@@ -7,10 +7,11 @@ namespace p2p_irc
 	{
 		const byte magic = 93;
 		const byte version = 0;
+        public const int max_message_size = 1024;
 
 		TLVs tlv_reader;
 
-		class MessageHeader
+		public class MessageHeader
 		{
 			public byte magic;
 			public byte version;
@@ -81,7 +82,12 @@ namespace p2p_irc
 				h.version = version;
 				h.body_length = (ushort)body.Length;
 				byte[] res = WriteHeader(h);
-				Array.Copy(body, 0, res, MessageHeader.body_offset, h.body_length);
+                if (res.Length > max_message_size)
+                {
+                    Console.WriteLine("[ERROR] Message too big !");
+                    return null;
+                }
+                Array.Copy(body, 0, res, MessageHeader.body_offset, h.body_length);
 				return res;
 			}
 			catch { Console.WriteLine("[ERROR] Error while packing body !"); }
@@ -93,9 +99,15 @@ namespace p2p_irc
 			return PackBody(tlv_reader.Write(t));
 		}
 
-		public byte[] PackTLVs(TLV[] ts)
+		public byte[][] PackTLVs(TLV[] ts)
 		{
-			return PackBody(tlv_reader.WriteAll(ts));
+            try
+            {
+                byte[][] res = tlv_reader.WriteAll(ts);
+                for (int i = 0; i < res.Length; i++)
+                    res[i] = PackBody(res[i]);
+                return res;
+            } catch { return null; }
 		}
 	}
 }

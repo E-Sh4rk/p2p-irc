@@ -21,7 +21,9 @@ namespace p2p_irc
 	}
 	public class TLVs
 	{
-		public TLVs() { }
+        const int max_tlv_size = Messages.max_message_size - Messages.MessageHeader.body_offset;
+
+        public TLVs() { }
 
 		// Read the TLV at the given position, and update the pointer offset. Return null if it is a Pad or an incorrect/unknown TLV.
 		public TLV Read(byte[] buffer, ref int offset)
@@ -73,12 +75,16 @@ namespace p2p_irc
 			return tlvs.ToArray();
 		}
 
-		// TODO: 1024 length max
 		public byte[] Write(TLV tlv)
 		{
 			try
 			{
 				byte[] res = new byte[tlv.body.Length + 2];
+                if (res.Length > max_tlv_size)
+                {
+                    Console.WriteLine("[ERROR] TLV too big !");
+                    return null;
+                }
 				res[0] = (byte)tlv.type;
 				res[1] = (byte)tlv.body.Length;
 				Array.Copy(tlv.body, 0, res, 2, tlv.body.Length);
@@ -87,24 +93,44 @@ namespace p2p_irc
 			catch { return null; }
 		}
 
-		public byte[] WriteAll(TLV[] tlvs)
+		public byte[][] WriteAll(TLV[] tlvs)
 		{
-			int total_len = 0;
+            if (tlvs == null)
+                return null;
 			List<byte[]> bs = new List<byte[]>();
+            List<int> packets_size = new List<int>();
+            int current_packet_size = 0;
 			foreach (TLV t in tlvs)
 			{
 				byte[] b = Write(t);
 				if (b == null)
 					continue;
-				total_len += b.Length;
+                if (current_packet_size + b.Length <= max_tlv_size)
+                    current_packet_size += b.Length;
+                else
+                {
+                    packets_size.Add(current_packet_size);
+                    current_packet_size = b.Length;
+                }
 				bs.Add(b);
 			}
-			byte[] res = new byte[total_len];
-			int current = 0;
+            if (current_packet_size > 0)
+                packets_size.Add(current_packet_size);
+
+			byte[][] res = new byte[packets_size.Count][];
+			int current_offset = 0;
+            int current_array = 0;
 			foreach (byte[] b in bs)
 			{
-				Array.Copy(b, 0, res, current, b.Length);
-				current += b.Length;
+                if (current_offset >= packets_size[current_array])
+                {
+                    current_offset = 0;
+                    current_array++;
+                }
+                if (res[current_array] == null)
+                    res[current_array] = new byte[packets_size[current_array]];
+				Array.Copy(b, 0, res[current_array], current_offset, b.Length);
+                current_offset += b.Length;
 			}
 			return res;
 		}

@@ -24,12 +24,14 @@ namespace p2p_irc
 		public const int recentDelay = 60 * 2; // Durée max pour qu'un voisin soit considéré comme récent
 		public const int symetricDelay = 60 * 2; // Durée max pour qu'un voisin soit considéré comme symétrique
 
+        const int maxPotentialNeighborsNumber = 25;
+
 		public const int searchNeighborsThreshold = 8;
 		public const int helloNeighborsDelay = 30;
 		public const int sendNeighborsDelay = 60;
 
 		Dictionary<PeerAddress, PeerInfo> neighborsTable;
-		List<PeerAddress> potentialNeighbors;
+		Dictionary<PeerAddress, int> potentialNeighbors; // Associate to a potential neighbor the number of unsucessful tries.
 
 		TLV_utils tlv_utils;
 		Communications com;
@@ -37,20 +39,20 @@ namespace p2p_irc
 
 		public Peers(PeerAddress[] potentialNeighbors, Communications com, TLV_utils tlv_utils, Messages messages)
 		{
-			// To be sure that initial addresses are IPv6
-			for (int i = 0; i < potentialNeighbors.Length; i++)
+            this.potentialNeighbors = new Dictionary<PeerAddress, int>();
+            for (int i = 0; i < potentialNeighbors.Length; i++)
 			{
-				potentialNeighbors[i].ip = potentialNeighbors[i].ip.MapToIPv6();
+                PeerAddress addr = potentialNeighbors[i];
+                // To be sure that initial addresses are IPv6
+                addr.ip = addr.ip.MapToIPv6();
+                this.potentialNeighbors[addr] = -1; // We associate -1 : we want to never delete inital potential neighbors from the list.
 			}
 
-			this.potentialNeighbors = new List<PeerAddress>(potentialNeighbors);
 			this.com = com;
 			this.messages = messages;
 			this.tlv_utils = tlv_utils;
 			neighborsTable = new Dictionary<PeerAddress, PeerInfo>();
 		}
-
-		// TODO : Delete some potential neighbors sometimes?
 
 		public void TreatTLV(PeerAddress a, TLV tlv)
 		{
@@ -79,6 +81,7 @@ namespace p2p_irc
                                 pi.lastHelloLong = Stopwatch.StartNew();
                             }
 							neighborsTable[a] = pi;
+                            potentialNeighbors[a] = 0;
 						}
 						break;
 					case TLV.Type.GoAway:
@@ -92,8 +95,8 @@ namespace p2p_irc
 						PeerAddress? pa = tlv_utils.getNeighbourAddress(tlv);
 						if (pa.HasValue)
 						{
-							if (!potentialNeighbors.Contains(pa.Value) && !com.IsSelf(pa.Value))
-								potentialNeighbors.Add(pa.Value);
+							if (!com.IsSelf(pa.Value))
+								potentialNeighbors[pa.Value] = 0;
 						}
 						break;
 				}
@@ -145,7 +148,26 @@ namespace p2p_irc
 			}
 			catch { return false; }
 		}
-		public void RemoveOldNeighbors()
+        bool RemoveOldestPotentialNeighbor()
+        {
+            int max = -1;
+            PeerAddress? addr_max = null;
+            foreach (PeerAddress addr in potentialNeighbors.Keys)
+            {
+                if (potentialNeighbors[addr] > max)
+                {
+                    max = potentialNeighbors[addr];
+                    addr_max = addr;
+                }
+            }
+            if (addr_max.HasValue)
+            {
+                potentialNeighbors.Remove(addr_max.Value);
+                return true;
+            }
+            return false;
+        }
+        public void RemoveOldNeighbors()
 		{
 			PeerAddress[] ns = GetNeighbors();
 			foreach (PeerAddress n in ns)
@@ -153,6 +175,12 @@ namespace p2p_irc
 				if (!IsRecentNeighbor(n))
 					Goodbye(n);
 			}
+            // If the list of potential neighbors is too big, we also purge it
+            while (potentialNeighbors.Count > maxPotentialNeighborsNumber)
+            {
+                if (!RemoveOldestPotentialNeighbor())
+                    break;
+            }
 		}
 
 		public void SayHello()
@@ -160,10 +188,14 @@ namespace p2p_irc
 			// Short hello if not enough neighbours
 			if (GetSymetricsNeighbors().Length < searchNeighborsThreshold)
 			{
-				foreach (PeerAddress p in potentialNeighbors)
+				foreach (PeerAddress p in potentialNeighbors.Keys)
 				{
-					if (!IsSymetricNeighbor(p))
-						com.SendMessage(p, messages.PackTLV(tlv_utils.shortHello()));
+                    if (!neighborsTable.ContainsKey(p))
+                    {
+                        com.SendMessage(p, messages.PackTLV(tlv_utils.shortHello()));
+                        if (potentialNeighbors[p] >= 0 && potentialNeighbors[p] < int.MaxValue)
+                            potentialNeighbors[p]++;
+                    }
 				}
 			}
 			// Long hello
@@ -186,8 +218,9 @@ namespace p2p_irc
 						tlvs.Add(tlv_utils.neighbour(pa));
 				}
 
-				byte[] msg = messages.PackTLVs(tlvs.ToArray());
-				com.SendMessage(p, msg);
+				byte[][] msgs = messages.PackTLVs(tlvs.ToArray());
+                foreach (byte[] msg in msgs)
+				    com.SendMessage(p, msg);
 			}
 		}
 
