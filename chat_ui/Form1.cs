@@ -15,7 +15,7 @@ namespace chat_ui
     {
         Settings settings;
         p2p_irc.Protocol protocol;
-        
+
         public Form1()
         {
             InitializeComponent();
@@ -58,7 +58,7 @@ namespace chat_ui
                 }
                 catch { }
             }
-            protocol = new p2p_irc.Protocol(settings.Port,neighbors.ToArray(),new p2p_irc.Chat.NewMessage(newMessageArrived));
+            protocol = new p2p_irc.Protocol(settings.Port, neighbors.ToArray(), new p2p_irc.Chat.NewMessage(newMessageArrived));
             t = new Thread(new ThreadStart(protocol.Run));
             t.Start();
         }
@@ -66,7 +66,7 @@ namespace chat_ui
         public void newMessageArrived(ulong sender, string msg)
         {
             if (this.InvokeRequired)
-                this.Invoke((MethodInvoker) delegate { newMessageArrived(sender, msg); });
+                this.Invoke((MethodInvoker)delegate { newMessageArrived(sender, msg); });
             else
             {
                 if (settings.ShowIDs)
@@ -74,7 +74,7 @@ namespace chat_ui
                 chatTextBox.AppendText(msg + Environment.NewLine);
             }
         }
-        public void newDebugMessage(string msg, ulong?sender)
+        public void newDebugMessage(string msg, ulong? sender)
         {
             if (this.InvokeRequired)
                 this.Invoke((MethodInvoker)delegate { newDebugMessage(msg, sender); });

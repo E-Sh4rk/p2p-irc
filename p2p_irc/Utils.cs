@@ -18,7 +18,7 @@ namespace p2p_irc
         public static uint ToUInt32(byte[] b, int offset)
         {
             int i = IPAddress.NetworkToHostOrder(BitConverter.ToInt32(b, offset));
-            unchecked{ return (uint)i; }; // Unchecked is for disabling overflow checking at runtime
+            unchecked { return (uint)i; }; // Unchecked is for disabling overflow checking at runtime
         }
         public static int ToInt32(byte[] b, int offset)
         {

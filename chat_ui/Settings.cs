@@ -72,7 +72,7 @@ namespace chat_ui
             }
         }
 
-        private void close_Click(object sender, EventArgs e) { closedProperly = true;  this.Close(); }
+        private void close_Click(object sender, EventArgs e) { closedProperly = true; this.Close(); }
 
         private void button2_Click(object sender, EventArgs e)
         {

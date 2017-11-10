@@ -6,35 +6,35 @@ using System.Threading;
 namespace p2p_irc
 {
     public class Protocol
-	{
-		ulong ID;
-		Random r;
+    {
+        ulong ID;
+        Random r;
 
-		Communications com;
-		Messages messages;
-		TLV_utils tlv_utils;
+        Communications com;
+        Messages messages;
+        TLV_utils tlv_utils;
 
-		Peers p;
-		Chat c;
+        Peers p;
+        Chat c;
 
-		public Protocol(int? port, PeerAddress[] potential_peers, Chat.NewMessage new_msg_action)
-		{
-			r = new Random();
-			ID = (ulong)(r.NextDouble() * ulong.MaxValue);
-			com = new Communications(port);
-			messages = new Messages();
-			tlv_utils = new TLV_utils(ID);
-			p = new Peers(potential_peers, com, tlv_utils, messages);
-			c = new Chat(com, tlv_utils, messages, p, new_msg_action);
-		}
+        public Protocol(int? port, PeerAddress[] potential_peers, Chat.NewMessage new_msg_action)
+        {
+            r = new Random();
+            ID = (ulong)(r.NextDouble() * ulong.MaxValue);
+            com = new Communications(port);
+            messages = new Messages();
+            tlv_utils = new TLV_utils(ID);
+            p = new Peers(potential_peers, com, tlv_utils, messages);
+            c = new Chat(com, tlv_utils, messages, p, new_msg_action);
+        }
 
-		public void SendMessage(string msg)
-		{
-			lock (this) // Mutual exclusion to be thread safe
-			{
-				c.SendMessage(msg);
-			}
-		}
+        public void SendMessage(string msg)
+        {
+            lock (this) // Mutual exclusion to be thread safe
+            {
+                c.SendMessage(msg);
+            }
+        }
 
         public void Dispose()
         {
@@ -42,15 +42,15 @@ namespace p2p_irc
         }
 
         bool disposed = false;
-		Thread thread;
-		Stopwatch lastHelloSaid;
-		Stopwatch lastNeighborsSaid;
-		void thread_procedure()
-		{
-			while (!disposed)
-			{
-				lock (this) // Mutual exclusion to be thread safe
-				{
+        Thread thread;
+        Stopwatch lastHelloSaid;
+        Stopwatch lastNeighborsSaid;
+        void thread_procedure()
+        {
+            while (!disposed)
+            {
+                lock (this) // Mutual exclusion to be thread safe
+                {
                     if (!disposed)
                     {
                         // Peers
@@ -69,11 +69,11 @@ namespace p2p_irc
                         c.RemoveOldMessages();
                         c.Flood();
                     }
-				}
+                }
 
-				Thread.Sleep(r.Next(250, 750)); // A little random...
-			}
-		}
+                Thread.Sleep(r.Next(250, 750)); // A little random...
+            }
+        }
 
         public void Run()
         {
@@ -131,5 +131,5 @@ namespace p2p_irc
                 com.Close();
             }
         }
-	}
+    }
 }
