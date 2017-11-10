@@ -188,7 +188,8 @@ namespace p2p_irc
 			// Short hello if not enough neighbours
 			if (GetSymetricsNeighbors().Length < searchNeighborsThreshold)
 			{
-				foreach (PeerAddress p in potentialNeighbors.Keys)
+                PeerAddress[] ps = potentialNeighbors.Keys.ToArray();
+                foreach (PeerAddress p in ps)
 				{
                     if (!neighborsTable.ContainsKey(p))
                     {

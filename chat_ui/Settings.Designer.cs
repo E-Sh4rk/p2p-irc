@@ -38,12 +38,13 @@
             this.neighbors = new System.Windows.Forms.TextBox();
             this.showIDs = new System.Windows.Forms.CheckBox();
             this.label4 = new System.Windows.Forms.Label();
+            this.showDebug = new System.Windows.Forms.CheckBox();
             ((System.ComponentModel.ISupportInitialize)(this.portNumber)).BeginInit();
             this.SuspendLayout();
             // 
             // close
             // 
-            this.close.Location = new System.Drawing.Point(195, 209);
+            this.close.Location = new System.Drawing.Point(195, 235);
             this.close.Name = "close";
             this.close.Size = new System.Drawing.Size(75, 23);
             this.close.TabIndex = 0;
@@ -53,7 +54,7 @@
             // 
             // restartConnections
             // 
-            this.restartConnections.Location = new System.Drawing.Point(76, 209);
+            this.restartConnections.Location = new System.Drawing.Point(76, 235);
             this.restartConnections.Name = "restartConnections";
             this.restartConnections.Size = new System.Drawing.Size(113, 23);
             this.restartConnections.TabIndex = 1;
@@ -63,7 +64,7 @@
             // 
             // portNumber
             // 
-            this.portNumber.Location = new System.Drawing.Point(150, 70);
+            this.portNumber.Location = new System.Drawing.Point(150, 96);
             this.portNumber.Maximum = new decimal(new int[] {
             65535,
             0,
@@ -86,7 +87,7 @@
             // label1
             // 
             this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(15, 72);
+            this.label1.Location = new System.Drawing.Point(15, 98);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(129, 13);
             this.label1.TabIndex = 3;
@@ -112,7 +113,7 @@
             // label3
             // 
             this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(15, 103);
+            this.label3.Location = new System.Drawing.Point(15, 129);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(249, 13);
             this.label3.TabIndex = 6;
@@ -120,7 +121,7 @@
             // 
             // neighbors
             // 
-            this.neighbors.Location = new System.Drawing.Point(12, 119);
+            this.neighbors.Location = new System.Drawing.Point(12, 145);
             this.neighbors.Multiline = true;
             this.neighbors.Name = "neighbors";
             this.neighbors.Size = new System.Drawing.Size(258, 84);
@@ -146,11 +147,24 @@
             this.label4.TabIndex = 9;
             this.label4.Text = "Display";
             // 
+            // showDebug
+            // 
+            this.showDebug.AutoSize = true;
+            this.showDebug.Checked = true;
+            this.showDebug.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.showDebug.Location = new System.Drawing.Point(150, 61);
+            this.showDebug.Name = "showDebug";
+            this.showDebug.Size = new System.Drawing.Size(129, 17);
+            this.showDebug.TabIndex = 10;
+            this.showDebug.Text = "Show errors/warnings";
+            this.showDebug.UseVisualStyleBackColor = true;
+            // 
             // Settings
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(282, 243);
+            this.ClientSize = new System.Drawing.Size(282, 270);
+            this.Controls.Add(this.showDebug);
             this.Controls.Add(this.label4);
             this.Controls.Add(this.showIDs);
             this.Controls.Add(this.neighbors);
@@ -183,5 +197,6 @@
         private System.Windows.Forms.TextBox neighbors;
         private System.Windows.Forms.CheckBox showIDs;
         private System.Windows.Forms.Label label4;
+        private System.Windows.Forms.CheckBox showDebug;
     }
 }

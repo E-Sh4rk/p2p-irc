@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace p2p_irc
 {
-    static class Utils
+    public static class Utils
     {
         // CONVERSION
         public static ushort ToUInt16(byte[] b, int offset)

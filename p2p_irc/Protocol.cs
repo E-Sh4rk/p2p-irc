@@ -5,7 +5,6 @@ using System.Threading;
 
 namespace p2p_irc
 {
-    // TODO : UI : mode to show errors.
     public class Protocol
 	{
 		ulong ID;

@@ -173,12 +173,16 @@ namespace p2p_irc
 
 		public void SendMessage(string msg)
 		{
-			MessageIdentifier mid = new MessageIdentifier();
-			mid.sender = tlv_utils.getSelfID();
-			mid.nonce = tlv_utils.nextDataNonce();
-			MessageFloodInfo mii = InitNewFloodInfo(msg);
-			recent_messages[mid] = mii;
-			new_message_action(mid.sender, msg);
+            MessageIdentifier mid = new MessageIdentifier();
+            mid.sender = tlv_utils.getSelfID();
+            mid.nonce = tlv_utils.nextDataNonce();
+            // Send the message only if it is not too big
+            if (messages.PackTLV(tlv_utils.data(mid.sender, mid.nonce, msg)) != null)
+            {
+                MessageFloodInfo mii = InitNewFloodInfo(msg);
+                recent_messages[mid] = mii;
+                new_message_action(mid.sender, msg);
+            }
 		}
 	}
 }

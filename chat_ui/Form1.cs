@@ -19,6 +19,7 @@ namespace chat_ui
         public Form1()
         {
             InitializeComponent();
+            p2p_irc.Utils.debug_action = new p2p_irc.Utils.NewDebugMessage(newDebugMessage);
             settings = new Settings();
             showSettings();
         }
@@ -26,7 +27,9 @@ namespace chat_ui
         void showSettings()
         {
             settings.ShowDialog(this);
-            if (settings.RestartCommunications)
+            if (!settings.ClosedProperly)
+                Close();
+            else if (settings.RestartCommunications)
                 restartCommunications();
         }
 
@@ -67,8 +70,18 @@ namespace chat_ui
             else
             {
                 if (settings.ShowIDs)
-                    chatTextBox.Text += "[" + sender.ToString() + "] ";
-                chatTextBox.Text += msg + Environment.NewLine;
+                    chatTextBox.AppendText("[" + sender.ToString() + "] ");
+                chatTextBox.AppendText(msg + Environment.NewLine);
+            }
+        }
+        public void newDebugMessage(string msg, ulong?sender)
+        {
+            if (this.InvokeRequired)
+                this.Invoke((MethodInvoker)delegate { newDebugMessage(msg, sender); });
+            else
+            {
+                if (settings.ShowDebug)
+                    chatTextBox.AppendText(msg + Environment.NewLine);
             }
         }
 

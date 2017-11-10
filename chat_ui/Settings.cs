@@ -17,12 +17,22 @@ namespace chat_ui
         }
 
         bool restartCommunications = true;
+        bool closedProperly = false;
         public bool RestartCommunications
         {
             get
             {
                 bool r = restartCommunications;
                 restartCommunications = false;
+                return r;
+            }
+        }
+        public bool ClosedProperly
+        {
+            get
+            {
+                bool r = closedProperly;
+                closedProperly = false;
                 return r;
             }
         }
@@ -47,6 +57,13 @@ namespace chat_ui
                 return showIDs.Checked;
             }
         }
+        public bool ShowDebug
+        {
+            get
+            {
+                return showDebug.Checked;
+            }
+        }
         public string[] Neighbors
         {
             get
@@ -55,7 +72,7 @@ namespace chat_ui
             }
         }
 
-        private void close_Click(object sender, EventArgs e) {  this.Close(); }
+        private void close_Click(object sender, EventArgs e) { closedProperly = true;  this.Close(); }
 
         private void button2_Click(object sender, EventArgs e)
         {
