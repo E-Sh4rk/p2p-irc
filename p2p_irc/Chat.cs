@@ -27,7 +27,7 @@ namespace p2p_irc
 
     public class Chat
     {
-        public const int recentMessageDelay = 60 * 5; // Durée max pendant laquelle on continue à innonder
+        public const int recentMessageDelay = 60 * 5; // Durée pendant laquelle on garde un message en memoire
         public const int max_flood_tries_number = 5;
 
         TLV_utils tlv_utils;
