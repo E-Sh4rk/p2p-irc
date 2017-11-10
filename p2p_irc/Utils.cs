@@ -9,6 +9,7 @@ namespace p2p_irc
 {
     static class Utils
     {
+        // CONVERSION
         public static ushort ToUInt16(byte[] b, int offset)
         {
             short s = IPAddress.NetworkToHostOrder(BitConverter.ToInt16(b, offset));
@@ -56,6 +57,17 @@ namespace p2p_irc
                 long l2 = (long)l;
                 return BitConverter.GetBytes(IPAddress.HostToNetworkOrder(l2));
             };
+        }
+
+        // DEBUG
+        public delegate void NewDebugMessage(string msg, ulong? fromID);
+        public static NewDebugMessage debug_action = null;
+        public static void Debug(string msg, ulong? fromID = null)
+        {
+            if (debug_action == null)
+                Console.WriteLine(msg);
+            else
+                debug_action(msg, fromID);
         }
     }
 }

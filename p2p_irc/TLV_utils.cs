@@ -83,8 +83,8 @@ namespace p2p_irc
 				{
 					string msg = Encoding.UTF8.GetString(tlv.body, 1, tlv.body.Length - 1);
 					if (!String.IsNullOrEmpty(msg))
-						Console.WriteLine("[GO_AWAY] " + msg);
-				} catch { Console.WriteLine("[GO_AWAY] Invalid message."); }
+						Utils.Debug("[GO_AWAY] " + msg);
+				} catch { Utils.Debug("[ERROR] GoAway invalid message."); }
 				return tlv.body[0];
 			}
 			catch { return null; }

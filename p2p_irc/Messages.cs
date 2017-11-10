@@ -39,19 +39,15 @@ namespace p2p_irc
 			try
 			{
 				MessageHeader h = ReadHeader(buffer);
-				if (h.magic != magic)
-					return null;
+                if (h.magic != magic)
+                    return null;
 				if (h.version != version)
 					return null;
 				byte[] body = new byte[h.body_length];
 				Array.Copy(buffer, MessageHeader.body_offset, body, 0, h.body_length);
 				return body;
 			}
-			catch (IndexOutOfRangeException e)
-			{ Console.WriteLine("[ERROR] Message not complete !"); }
-			catch (ArgumentException e)
-			{ Console.WriteLine("[ERROR] Message not complete !"); }
-			catch { Console.WriteLine("[ERROR] Incorrect message !"); }
+			catch { Utils.Debug("[ERROR] Incorrect message !"); }
 			return null;
 		}
 
@@ -84,13 +80,13 @@ namespace p2p_irc
 				byte[] res = WriteHeader(h);
                 if (res.Length > max_message_size)
                 {
-                    Console.WriteLine("[ERROR] Message too big !");
+                    Utils.Debug("[ERROR] Message too big !");
                     return null;
                 }
                 Array.Copy(body, 0, res, MessageHeader.body_offset, h.body_length);
 				return res;
 			}
-			catch { Console.WriteLine("[ERROR] Error while packing body !"); }
+			catch { Utils.Debug("[ERROR] Error while packing body !"); }
 			return null;
 		}
 

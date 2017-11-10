@@ -53,7 +53,7 @@ namespace p2p_irc
 			}
 			catch
 			{
-				Console.WriteLine("[ERROR] Invalid TLV !");
+				Utils.Debug("[ERROR] Invalid TLV !");
 				// We put the pointer to the end of the buffer to avoid reading incorrect TLVs again.
 				offset = buffer.Length;
 			}
@@ -82,7 +82,7 @@ namespace p2p_irc
 				byte[] res = new byte[tlv.body.Length + 2];
                 if (res.Length > max_tlv_size)
                 {
-                    Console.WriteLine("[ERROR] TLV too big !");
+                    Utils.Debug("[ERROR] TLV too big !");
                     return null;
                 }
 				res[0] = (byte)tlv.type;

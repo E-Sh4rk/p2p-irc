@@ -5,7 +5,6 @@ using System.Threading;
 
 namespace p2p_irc
 {
-    // TODO : Console.WriteLine --> Debug
     // TODO : UI : mode to show errors.
     public class Protocol
 	{
@@ -117,7 +116,7 @@ namespace p2p_irc
                                 case TLV.Type.Warning:
                                     string msg = tlv_utils.getWarningMessage(t);
                                     if (!String.IsNullOrEmpty(msg))
-                                        Console.WriteLine("[WARNING] " + msg);
+                                        Utils.Debug("[WARNING] " + msg);
                                     break;
                             }
                         }

@@ -38,7 +38,7 @@ namespace p2p_irc
 				IPEndPoint ep = new IPEndPoint(pa.ip.MapToIPv6(), pa.port);
                 socket.SendTo(msg, msg.Length, SocketFlags.None, ep);
             }
-			catch { Console.WriteLine("[ERROR] Error while sending datagram."); }
+			catch { Utils.Debug("[ERROR] Error while sending datagram."); }
 		}
 		public DataReceived ReceiveMessage()
 		{
@@ -59,7 +59,7 @@ namespace p2p_irc
                 return res;
             }
             catch (SocketException) { } // Timeout
-            catch { Console.WriteLine("[ERROR] Error while receiving datagram."); }
+            catch { Utils.Debug("[ERROR] Error while receiving datagram."); }
 			return null;
 		}
 		public bool IsSelf(PeerAddress pa)
