@@ -104,7 +104,10 @@ namespace chat_ui
             {
                 case "/me":
                     return "* " + settings.Username + " " + tail;
-                case "/exit":
+                case "/clear":
+                    chatTextBox.Clear();
+                    break;
+                case "/quit":
                     Close();
                     break;
             }
