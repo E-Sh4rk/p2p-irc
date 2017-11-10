@@ -90,10 +90,37 @@ namespace chat_ui
             showSettings();
         }
 
+        private string interpretCommand(string command)
+        {
+            string cmd = command;
+            string tail = "";
+            int index = command.IndexOf(' ');
+            if (index >= 0)
+            {
+                cmd = command.Substring(0, index);
+                tail = command.Substring(index);
+            }
+            switch (cmd)
+            {
+                case "/me":
+                    return "* " + settings.Username + " " + tail;
+                case "/exit":
+                    Close();
+                    break;
+            }
+            return null;
+        }
+
         private void sendButton_Click(object sender, EventArgs e)
         {
-            protocol.SendMessage(settings.Username + ": " + messageTextBox.Text);
-            messageTextBox.Text = "";
+            string msg = messageTextBox.Text;
+            messageTextBox.Clear();
+            if (msg.StartsWith("/"))
+                msg = interpretCommand(msg);
+            else
+                msg = settings.Username + ": " + msg;
+            if (!String.IsNullOrEmpty(msg))
+                protocol.SendMessage(msg);
         }
 
         private void Form1_FormClosed(object sender, FormClosedEventArgs e)
