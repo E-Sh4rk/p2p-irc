@@ -47,6 +47,8 @@ namespace p2p_irc
         Stopwatch lastNeighborsSaid;
         void thread_procedure()
         {
+            // Initially, we multicast an hello
+            lock (this) { com.SendMulticastMessage(messages.PackTLV(tlv_utils.shortHello())); }
             while (!disposed)
             {
                 lock (this) // Mutual exclusion to be thread safe
@@ -124,6 +126,7 @@ namespace p2p_irc
 
                 Thread.Sleep(10);
             }
+            // Close connections...
             lock (this)
             {
                 p.GoodByeEveryone();

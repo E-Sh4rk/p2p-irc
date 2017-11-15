@@ -19,7 +19,7 @@ namespace p2p_irc
             PeerAddress pa = new PeerAddress();
             pa.port = 1212;
             pa.ip = Dns.GetHostEntry("jch.irif.fr").AddressList[0];
-            Console.WriteLine("Port number to use (empty for no bind) :");
+            Console.WriteLine("Port number to use (leave empty for automatic attribution) :");
             string port_str = Console.ReadLine();
             int? port = null;
             try { port = Convert.ToUInt16(port_str); } catch { }

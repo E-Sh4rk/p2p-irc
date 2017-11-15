@@ -13,7 +13,23 @@ namespace p2p_irc
         }
 
         private const int MaxUDPSize = 0x10000;
+        private const string multicast = "ff12:b456:dad4:cee1:4589:71de:a2ec:e66";
+        private const int multicast_port = 1212;
+
         Socket socket;
+        private void JoinMulticast(Socket s)
+        {
+            if (((IPEndPoint)s.LocalEndPoint).Port == multicast_port)
+            {
+                try
+                {
+                    s.MulticastLoopback = false;
+                    IPAddress multicast_ip = IPAddress.Parse(multicast);
+                    s.SetSocketOption(SocketOptionLevel.IPv6, SocketOptionName.AddMembership, new IPv6MulticastOption(multicast_ip));
+                }
+                catch { }
+            }
+        }
         public Communications(int? port)
         {
             // For .NET framework < 4.5 : https://blogs.msdn.microsoft.com/webdev/2013/01/08/dual-mode-sockets-never-create-an-ipv4-socket-again/
@@ -25,13 +41,23 @@ namespace p2p_irc
                 socket.Bind(new IPEndPoint(IPAddress.IPv6Any, 0));
             socket.ReceiveTimeout = 100;
             socket.SendTimeout = 100; // Should not be used in UDP... but anyway.
-            socket.Blocking = false; // If a packet can't be send immedialty, we prefer to drop it rather than blocking the thread...
+            socket.Blocking = false; // If a packet can't be send immediatly, we prefer to drop it rather than blocking the thread...
+            JoinMulticast(socket);
         }
 
         public void Close()
         {
             socket.Close();
             socket = null;
+        }
+        public void SendMulticastMessage(byte[] msg)
+        {
+            try
+            {
+                IPEndPoint ep = new IPEndPoint(IPAddress.Parse(multicast), multicast_port);
+                socket.SendTo(msg, msg.Length, /*SocketFlags.Multicast*/ SocketFlags.None, ep);
+            }
+            catch { Utils.Debug("[ERROR] Error while sending multicast datagram."); }
         }
         public void SendMessage(PeerAddress pa, byte[] msg)
         {

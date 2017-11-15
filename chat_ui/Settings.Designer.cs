@@ -79,7 +79,7 @@
             this.portNumber.Size = new System.Drawing.Size(120, 20);
             this.portNumber.TabIndex = 2;
             this.portNumber.Value = new decimal(new int[] {
-            1819,
+            1212,
             0,
             0,
             0});
