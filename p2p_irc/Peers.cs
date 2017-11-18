@@ -130,9 +130,9 @@ namespace p2p_irc
             return sn.ToArray();
         }
 
-        public void Goodbye(PeerAddress n)
+        public void Goodbye(PeerAddress n, byte reason)
         {
-            com.SendMessage(n, messages.PackTLV(tlv_utils.goAway(2, "")));
+            com.SendMessage(n, messages.PackTLV(tlv_utils.goAway(reason, "")));
             neighborsTable.Remove(n);
         }
 
@@ -172,7 +172,7 @@ namespace p2p_irc
             foreach (PeerAddress n in ns)
             {
                 if (!IsRecentNeighbor(n))
-                    Goodbye(n);
+                    Goodbye(n,2);
             }
             // If the list of potential neighbors is too big, we also purge it
             while (potentialNeighbors.Count > maxPotentialNeighborsNumber)
@@ -229,7 +229,7 @@ namespace p2p_irc
             PeerAddress[] neighbors = GetNeighbors();
             foreach (PeerAddress p in neighbors)
             {
-                Goodbye(p);
+                Goodbye(p, 1);
             }
         }
     }

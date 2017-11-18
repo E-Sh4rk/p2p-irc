@@ -163,7 +163,7 @@ namespace p2p_irc
                             if (nfi.numberAttempts >= max_flood_tries_number)
                             {
                                 recent_messages[m].neighbors.Remove(pa);
-                                peers.Goodbye(pa);
+                                peers.Goodbye(pa, 2);
                             }
                         }
                     }
