@@ -84,14 +84,14 @@ namespace p2p_irc
                         break;
                     case TLV.Type.GoAway:
                         byte? reason = tlv_utils.getGoAwayCode(tlv);
-                        if (reason.HasValue)
+                        if (reason.HasValue && neighborsTable.ContainsKey(a))
                         {
                             try { neighborsTable.Remove(a); } catch { }
                         }
                         break;
                     case TLV.Type.Neighbour:
                         PeerAddress? pa = tlv_utils.getNeighbourAddress(tlv);
-                        if (pa.HasValue)
+                        if (pa.HasValue && neighborsTable.ContainsKey(a))
                         {
                             if (!com.IsSelf(pa.Value))
                                 potentialNeighbors[pa.Value] = 0;
