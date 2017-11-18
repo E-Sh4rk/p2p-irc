@@ -71,15 +71,13 @@ namespace p2p_irc
                             {
                                 pi = new PeerInfo();
                                 pi.lastHelloLong = null;
+                                // For a first contact, we reply immediatly to avoid a 30sec delay for establishing a symetric relation
+                                com.SendMessage(a, messages.PackTLV(tlv_utils.longHello(src_ID.Value)));
                             }
                             pi.ID = src_ID.Value;
                             pi.lastHello = Stopwatch.StartNew();
                             if (tlv_utils.isValidLongHello(tlv))
-                            {
-                                if (pi.lastHelloLong == null) // Dans le cas d'un premier hello long, on réplique tout de suite pr accélérer un peu les choses
-                                    com.SendMessage(a, messages.PackTLV(tlv_utils.longHello(pi.ID)));
                                 pi.lastHelloLong = Stopwatch.StartNew();
-                            }
                             neighborsTable[a] = pi;
                             potentialNeighbors[a] = 0;
                         }
